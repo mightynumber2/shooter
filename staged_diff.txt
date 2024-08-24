@@ -1,35 +1,143 @@
+diff --git a/project.godot b/project.godot
+index f3e0530..1ddeb50 100644
+--- a/project.godot
++++ b/project.godot
+@@ -15,6 +15,45 @@ run/main_scene="res://scenes/levels/level.tscn"
+ config/features=PackedStringArray("4.3", "Mobile")
+ config/icon="res://icon.svg"
+ 
++[input]
++
++left={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194319,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
++, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":65,"key_label":0,"unicode":97,"location":0,"echo":false,"script":null)
++]
++}
++right={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194321,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
++, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":68,"key_label":0,"unicode":100,"location":0,"echo":false,"script":null)
++]
++}
++up={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194320,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
++, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":87,"key_label":0,"unicode":119,"location":0,"echo":false,"script":null)
++]
++}
++down={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194322,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
++, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":83,"key_label":0,"unicode":115,"location":0,"echo":false,"script":null)
++]
++}
++"primary action"={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
++, Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(121, 21),"global_position":Vector2(130, 67),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
++]
++}
++"secondary action"={
++"deadzone": 0.5,
++"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194326,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
++, Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(170, 17),"global_position":Vector2(179, 63),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)
++]
++}
++
+ [rendering]
+ 
+ renderer/rendering_method="mobile"
 diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
-index 7f080aa..16b0909 100644
+index 16b0909..eb6cb38 100644
 --- a/scenes/levels/level.gd
 +++ b/scenes/levels/level.gd
-@@ -8,7 +8,7 @@ func _ready() -> void:
- 	print(test_array[0])
- 	
- func _process(delta: float) -> void:
--	$Logo.rotation_degrees += 1
-+	$Logo.rotation_degrees += 60 * delta
+@@ -12,3 +12,5 @@ func _process(delta: float) -> void:
  	
  	if $Logo.position.x > 1000:
  		$Logo.pos.x = 0
++
++	#print(Input.is_action_pressed("left"))
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+index 4f9e86d..d9901dc 100644
+--- a/scenes/levels/level.tscn
++++ b/scenes/levels/level.tscn
+@@ -1,8 +1,9 @@
+-[gd_scene load_steps=4 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
+ 
+ [ext_resource type="Texture2D" uid="uid://knmkjbj2v61g" path="res://icon.svg" id="1_5q468"]
+ [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
+ [ext_resource type="Script" path="res://scenes/levels/logo.gd" id="2_r7yfd"]
++[ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
+ 
+ [node name="Level" type="Node2D"]
+ script = ExtResource("1_mfxla")
+@@ -10,3 +11,6 @@ script = ExtResource("1_mfxla")
+ [node name="Logo" type="Sprite2D" parent="."]
+ texture = ExtResource("1_5q468")
+ script = ExtResource("2_r7yfd")
++
++[node name="Player" parent="." instance=ExtResource("4_5mwps")]
++position = Vector2(779, 376)
 diff --git a/scenes/levels/logo.gd b/scenes/levels/logo.gd
-index c2e7f7d..ff6f42a 100644
+index ff6f42a..e0fd1ad 100644
 --- a/scenes/levels/logo.gd
 +++ b/scenes/levels/logo.gd
-@@ -1,7 +1,7 @@
- extends Sprite2D
- 
- var pos: Vector2 = Vector2.ZERO
--const SPEED: int = 1.5
-+const SPEED: int = 200
- var test_scale: int = 1
- 
- # Called when the node enters the scene tree for the first time.
-@@ -18,7 +18,7 @@ func _ready() -> void:
+@@ -18,8 +18,8 @@ func _ready() -> void:
  
  # Called every frame. 'delta' is the elapsed time since the previous frame.
  func _process(delta: float) -> void:
--	pos.x += SPEED
-+	pos.x += SPEED * delta
- 	position = pos
+-	pos.x += SPEED * delta
+-	position = pos
++		pos.x += SPEED * delta
++		position = pos
  	
  	#test_scale += 1
+ 	#scale = Vector2(test_scale, test_scale)
+diff --git a/scenes/player/player.gd b/scenes/player/player.gd
+new file mode 100644
+index 0000000..0df3489
+--- /dev/null
++++ b/scenes/player/player.gd
+@@ -0,0 +1,13 @@
++extends Node2D
++
++func _process(delta: float) -> void:
++	# input
++	var direction = Input.get_vector("left", "right", "up", "down")
++	position += direction * 500 * delta
++
++	# laser shooting input
++	if Input.is_action_pressed("primary action"):
++		print("shooting mah lazers")
++	# shooting grendae input
++	if Input.is_action_pressed("secondary action"):
++		print("shoot grenade")                    
+diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
+index 3b8a3ed..5d5464e 100644
+--- a/scenes/player/player.tscn
++++ b/scenes/player/player.tscn
+@@ -1,19 +1,10 @@
+-[gd_scene load_steps=4 format=3 uid="uid://rj3p5ydyve7d"]
++[gd_scene load_steps=3 format=3 uid="uid://rj3p5ydyve7d"]
+ 
+ [ext_resource type="Texture2D" uid="uid://cp3p31wodcl4w" path="res://graphics/player/player.png" id="1_88vnt"]
+-[ext_resource type="Texture2D" uid="uid://d2isr461hlcai" path="res://graphics/projectiles/blue.png" id="2_sbodd"]
+-[ext_resource type="Texture2D" uid="uid://nq11ajhn8eis" path="res://graphics/projectiles/grenade.png" id="3_5fo1o"]
++[ext_resource type="Script" path="res://scenes/player/player.gd" id="1_hipnd"]
+ 
+ [node name="Player" type="Node2D"]
++script = ExtResource("1_hipnd")
+ 
+ [node name="PlayerImage" type="Sprite2D" parent="."]
+ texture = ExtResource("1_88vnt")
+-
+-[node name="LaserImage" type="Sprite2D" parent="PlayerImage"]
+-position = Vector2(19, -189)
+-texture = ExtResource("2_sbodd")
+-
+-[node name="GrenadeImage" type="Sprite2D" parent="PlayerImage"]
+-position = Vector2(-104, -185)
+-scale = Vector2(0.2, 0.2)
+-texture = ExtResource("3_5fo1o")

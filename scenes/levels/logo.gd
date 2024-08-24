@@ -18,8 +18,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pos.x += SPEED * delta
-	position = pos
+		pos.x += SPEED * delta
+		position = pos
 	
 	#test_scale += 1
 	#scale = Vector2(test_scale, test_scale)
