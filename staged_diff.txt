@@ -1,86 +1,60 @@
-diff --git a/project.godot b/project.godot
-index a1c8fc7..f3e0530 100644
---- a/project.godot
-+++ b/project.godot
-@@ -11,6 +11,7 @@ config_version=5
- [application]
- 
- config/name="Shooter"
-+run/main_scene="res://scenes/levels/level.tscn"
- config/features=PackedStringArray("4.3", "Mobile")
- config/icon="res://icon.svg"
- 
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+new file mode 100644
+index 0000000..7f080aa
+--- /dev/null
++++ b/scenes/levels/level.gd
+@@ -0,0 +1,14 @@
++extends Node2D
++
++var test_array: Array[String] = ["Test", "Hello", "stuff"]
++
++func _ready() -> void:
++	$Logo.rotation_degrees = 90
++	
++	print(test_array[0])
++	
++func _process(delta: float) -> void:
++	$Logo.rotation_degrees += 1
++	
++	if $Logo.position.x > 1000:
++		$Logo.pos.x = 0
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index e2fed7d..240cfb4 100644
+index 240cfb4..4f9e86d 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -1,22 +1,10 @@
--[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
-+[gd_scene load_steps=3 format=3 uid="uid://qkshw585lie5"]
+@@ -1,9 +1,11 @@
+-[gd_scene load_steps=3 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=4 format=3 uid="uid://qkshw585lie5"]
  
  [ext_resource type="Texture2D" uid="uid://knmkjbj2v61g" path="res://icon.svg" id="1_5q468"]
--[ext_resource type="Texture2D" uid="uid://tgxs1p5luwnb" path="res://graphics/car/main.png" id="2_nk35d"]
--[ext_resource type="PackedScene" uid="uid://1vvyq6vdxpgg" path="res://scenes/objects/bed.tscn" id="3_6o6h8"]
--[ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="3_w5hig"]
-+[ext_resource type="Script" path="res://scenes/levels/logo.gd" id="2_r7yfd"]
++[ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
+ [ext_resource type="Script" path="res://scenes/levels/logo.gd" id="2_r7yfd"]
  
  [node name="Level" type="Node2D"]
++script = ExtResource("1_mfxla")
  
  [node name="Logo" type="Sprite2D" parent="."]
--position = Vector2(610, 49)
  texture = ExtResource("1_5q468")
--
--[node name="Car" type="Sprite2D" parent="Logo"]
--position = Vector2(439, -12)
--texture = ExtResource("2_nk35d")
--
--[node name="Bed" parent="." instance=ExtResource("3_6o6h8")]
--position = Vector2(571, 465)
--
--[node name="Player" parent="." instance=ExtResource("3_w5hig")]
--position = Vector2(525, 483)
-+script = ExtResource("2_r7yfd")
 diff --git a/scenes/levels/logo.gd b/scenes/levels/logo.gd
-new file mode 100644
-index 0000000..8d3f166
---- /dev/null
+index 8d3f166..c2e7f7d 100644
+--- a/scenes/levels/logo.gd
 +++ b/scenes/levels/logo.gd
-@@ -0,0 +1,25 @@
-+extends Sprite2D
-+
-+var pos: Vector2 = Vector2.ZERO
-+const SPEED: int = 1.5
-+var test_scale: int = 1
-+
-+# Called when the node enters the scene tree for the first time.
-+func _ready() -> void:
-+	pos = Vector2(300, 200)
-+	position = pos
-+	
-+	var test_rotation = 45
-+	rotation_degrees = test_rotation
-+	
-+	test_scale = 2
-+	scale = Vector2(test_scale, test_scale)
-+
-+
-+# Called every frame. 'delta' is the elapsed time since the previous frame.
-+func _process(delta: float) -> void:
-+	pos.x += SPEED
-+	position = pos
-+	
-+	test_scale += 1
-+	scale = Vector2(test_scale, test_scale)
-diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
-index 2ce7f33..3b8a3ed 100644
---- a/scenes/player/player.tscn
-+++ b/scenes/player/player.tscn
-@@ -13,7 +13,7 @@ texture = ExtResource("1_88vnt")
- position = Vector2(19, -189)
- texture = ExtResource("2_sbodd")
- 
--[node name="Sprite2D" type="Sprite2D" parent="PlayerImage"]
-+[node name="GrenadeImage" type="Sprite2D" parent="PlayerImage"]
- position = Vector2(-104, -185)
- scale = Vector2(0.2, 0.2)
- texture = ExtResource("3_5fo1o")
+@@ -9,8 +9,8 @@ func _ready() -> void:
+ 	pos = Vector2(300, 200)
+ 	position = pos
+ 	
+-	var test_rotation = 45
+-	rotation_degrees = test_rotation
++	#var test_rotation = 45
++	#rotation_degrees = test_rotation
+ 	
+ 	test_scale = 2
+ 	scale = Vector2(test_scale, test_scale)
+@@ -21,5 +21,5 @@ func _process(delta: float) -> void:
+ 	pos.x += SPEED
+ 	position = pos
+ 	
+-	test_scale += 1
+-	scale = Vector2(test_scale, test_scale)
++	#test_scale += 1
++	#scale = Vector2(test_scale, test_scale)
