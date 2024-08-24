@@ -1,0 +1,80 @@
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+new file mode 100644
+index 0000000..e2fed7d
+--- /dev/null
++++ b/scenes/levels/level.tscn
+@@ -0,0 +1,22 @@
++[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
++
++[ext_resource type="Texture2D" uid="uid://knmkjbj2v61g" path="res://icon.svg" id="1_5q468"]
++[ext_resource type="Texture2D" uid="uid://tgxs1p5luwnb" path="res://graphics/car/main.png" id="2_nk35d"]
++[ext_resource type="PackedScene" uid="uid://1vvyq6vdxpgg" path="res://scenes/objects/bed.tscn" id="3_6o6h8"]
++[ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="3_w5hig"]
++
++[node name="Level" type="Node2D"]
++
++[node name="Logo" type="Sprite2D" parent="."]
++position = Vector2(610, 49)
++texture = ExtResource("1_5q468")
++
++[node name="Car" type="Sprite2D" parent="Logo"]
++position = Vector2(439, -12)
++texture = ExtResource("2_nk35d")
++
++[node name="Bed" parent="." instance=ExtResource("3_6o6h8")]
++position = Vector2(571, 465)
++
++[node name="Player" parent="." instance=ExtResource("3_w5hig")]
++position = Vector2(525, 483)
+diff --git a/scenes/objects/bed.tscn b/scenes/objects/bed.tscn
+new file mode 100644
+index 0000000..f508128
+--- /dev/null
++++ b/scenes/objects/bed.tscn
+@@ -0,0 +1,21 @@
++[gd_scene load_steps=4 format=3 uid="uid://1vvyq6vdxpgg"]
++
++[ext_resource type="Texture2D" uid="uid://bme1vw22dyyn6" path="res://graphics/objects/bed.png" id="1_gqcxu"]
++[ext_resource type="Texture2D" uid="uid://dgtp3iky1d30i" path="res://graphics/objects/pillow_large.png" id="2_ll1ei"]
++[ext_resource type="Texture2D" uid="uid://bgopsokc55v3t" path="res://graphics/objects/pillow_small.png" id="3_8f55x"]
++
++[node name="Bed" type="Node2D"]
++
++[node name="Bed" type="Sprite2D" parent="."]
++texture = ExtResource("1_gqcxu")
++
++[node name="Pillow" type="Sprite2D" parent="Bed"]
++position = Vector2(228, -6)
++rotation = -0.120428
++scale = Vector2(0.885, 0.885)
++skew = 0.0907571
++texture = ExtResource("2_ll1ei")
++
++[node name="PillowSmall" type="Sprite2D" parent="Bed"]
++position = Vector2(142, -4)
++texture = ExtResource("3_8f55x")
+diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
+new file mode 100644
+index 0000000..2ce7f33
+--- /dev/null
++++ b/scenes/player/player.tscn
+@@ -0,0 +1,19 @@
++[gd_scene load_steps=4 format=3 uid="uid://rj3p5ydyve7d"]
++
++[ext_resource type="Texture2D" uid="uid://cp3p31wodcl4w" path="res://graphics/player/player.png" id="1_88vnt"]
++[ext_resource type="Texture2D" uid="uid://d2isr461hlcai" path="res://graphics/projectiles/blue.png" id="2_sbodd"]
++[ext_resource type="Texture2D" uid="uid://nq11ajhn8eis" path="res://graphics/projectiles/grenade.png" id="3_5fo1o"]
++
++[node name="Player" type="Node2D"]
++
++[node name="PlayerImage" type="Sprite2D" parent="."]
++texture = ExtResource("1_88vnt")
++
++[node name="LaserImage" type="Sprite2D" parent="PlayerImage"]
++position = Vector2(19, -189)
++texture = ExtResource("2_sbodd")
++
++[node name="Sprite2D" type="Sprite2D" parent="PlayerImage"]
++position = Vector2(-104, -185)
++scale = Vector2(0.2, 0.2)
++texture = ExtResource("3_5fo1o")
