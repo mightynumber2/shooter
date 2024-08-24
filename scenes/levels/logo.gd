@@ -14,12 +14,13 @@ func _ready() -> void:
 	
 	test_scale = 2
 	scale = Vector2(test_scale, test_scale)
-
-
+	print($"..".test_array)
+	$"..".test_function()
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 		pos.x += SPEED * delta
 		position = pos
-	
+		
 	#test_scale += 1
 	#scale = Vector2(test_scale, test_scale)
