@@ -13,7 +13,7 @@ texture = ExtResource("1_88vnt")
 position = Vector2(19, -189)
 texture = ExtResource("2_sbodd")
 
-[node name="Sprite2D" type="Sprite2D" parent="PlayerImage"]
+[node name="GrenadeImage" type="Sprite2D" parent="PlayerImage"]
 position = Vector2(-104, -185)
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("3_5fo1o")
