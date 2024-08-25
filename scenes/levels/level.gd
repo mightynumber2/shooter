@@ -1,14 +1,12 @@
 extends Node2D
 
-var test_array: Array[String] = ["Test", "Hello", "stuff"]
-	
-func test_function():
-	print("this is a test function")
 
-
-func _on_area_2d_body_entered(_body: Node2D) -> void:
+func _on_gate_player_entered_gate(body) -> void:
 	print("body has entered")
+	print(body)
 
+func _on_player_laser() -> void:
+	print("laser from level")
 
-func _on_area_2d_body_exited(_body: Node2D) -> void:
-	print("body has exited")
+func _on_player_grenade() -> void:
+	print("grenade from level")

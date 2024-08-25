@@ -1,122 +1,145 @@
 diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
-index 7d5c9ce..f14e185 100644
+index f14e185..5ee344c 100644
 --- a/scenes/levels/level.gd
 +++ b/scenes/levels/level.gd
-@@ -4,3 +4,11 @@ var test_array: Array[String] = ["Test", "Hello", "stuff"]
- 	
- func test_function():
- 	print("this is a test function")
-+
-+
-+func _on_area_2d_body_entered(_body: Node2D) -> void:
-+	print("body has entered")
-+
-+
-+func _on_area_2d_body_exited(_body: Node2D) -> void:
-+	print("body has exited")
+@@ -1,14 +1,12 @@
+ extends Node2D
+ 
+-var test_array: Array[String] = ["Test", "Hello", "stuff"]
+-	
+-func test_function():
+-	print("this is a test function")
+ 
+-
+-func _on_area_2d_body_entered(_body: Node2D) -> void:
++func _on_gate_player_entered_gate(body) -> void:
+ 	print("body has entered")
++	print(body)
+ 
++func _on_player_laser() -> void:
++	print("laser from level")
+ 
+-func _on_area_2d_body_exited(_body: Node2D) -> void:
+-	print("body has exited")
++func _on_player_grenade() -> void:
++	print("grenade from level")
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index 6b22291..16c337a 100644
+index 16c337a..1982397 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -1,23 +1,33 @@
--[gd_scene load_steps=6 format=3 uid="uid://qkshw585lie5"]
-+[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
+@@ -1,33 +1,17 @@
+-[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=4 format=3 uid="uid://qkshw585lie5"]
  
  [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
-+[ext_resource type="Texture2D" uid="uid://b77krrjliywe5" path="res://graphics/objects/gate.png" id="3_b4us3"]
+-[ext_resource type="Texture2D" uid="uid://b77krrjliywe5" path="res://graphics/objects/gate.png" id="3_b4us3"]
++[ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
  [ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
--[ext_resource type="PackedScene" uid="uid://liobbmceo63h" path="res://scenes/objects/billboard.tscn" id="4_h5nmv"]
--[ext_resource type="PackedScene" uid="uid://bohviaeh3wewt" path="res://scenes/enemies/drone.tscn" id="5_bixnc"]
--[ext_resource type="PackedScene" uid="uid://1vvyq6vdxpgg" path="res://scenes/objects/bed.tscn" id="5_ohxsv"]
-+
-+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ywkr2"]
-+size = Vector2(829.5, 313.5)
  
+-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ywkr2"]
+-size = Vector2(829.5, 313.5)
+-
  [node name="Level" type="Node2D"]
  script = ExtResource("1_mfxla")
  
--[node name="Bed" parent="." instance=ExtResource("5_ohxsv")]
--position = Vector2(790, 75)
-+[node name="Gate" type="StaticBody2D" parent="."]
+-[node name="Gate" type="StaticBody2D" parent="."]
+-
+-[node name="Gate" type="Sprite2D" parent="Gate"]
+-position = Vector2(528, -506)
+-texture = ExtResource("3_b4us3")
+-
+-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Gate"]
+-position = Vector2(-4, -9)
+-polygon = PackedVector2Array(-910, -1282, -907, 39, -878, 140, -809, 228, -732, 271, 153, 273, 157, -34, 1024, -34, 1027, 271, 1883, 271, 1947, 244, 1995, 213, 2045, 158, 2078, 93, 2087, 6, 2087, -1295)
+-
+-[node name="Area2D" type="Area2D" parent="Gate"]
+-
+-[node name="CollisionShape2D" type="CollisionShape2D" parent="Gate/Area2D"]
+-position = Vector2(585.75, 229.25)
+-shape = SubResource("RectangleShape2D_ywkr2")
++[node name="Gate" parent="." instance=ExtResource("2_olrab")]
  
--[node name="Player" parent="." instance=ExtResource("4_5mwps")]
--position = Vector2(776, 449)
-+[node name="Gate" type="Sprite2D" parent="Gate"]
-+position = Vector2(528, -506)
-+texture = ExtResource("3_b4us3")
+ [node name="Player" parent="." instance=ExtResource("4_5mwps")]
+ position = Vector2(494, 555)
+ 
+-[connection signal="body_entered" from="Gate/Area2D" to="." method="_on_area_2d_body_entered"]
+-[connection signal="body_exited" from="Gate/Area2D" to="." method="_on_area_2d_body_exited"]
++[connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
++[connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
++[connection signal="laser" from="Player" to="." method="_on_player_laser"]
+diff --git a/scenes/objects/gate.gd b/scenes/objects/gate.gd
+new file mode 100644
+index 0000000..c87e0f0
+--- /dev/null
++++ b/scenes/objects/gate.gd
+@@ -0,0 +1,6 @@
++extends StaticBody2D
 +
-+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Gate"]
++signal player_entered_gate(body)
++
++func _on_area_2d_body_entered(body: Node2D) -> void:
++	player_entered_gate.emit(body)
+diff --git a/scenes/objects/gate.tscn b/scenes/objects/gate.tscn
+new file mode 100644
+index 0000000..47ef85b
+--- /dev/null
++++ b/scenes/objects/gate.tscn
+@@ -0,0 +1,26 @@
++[gd_scene load_steps=4 format=3 uid="uid://b0rcxvc3vsgkr"]
++
++[ext_resource type="Script" path="res://scenes/objects/gate.gd" id="1_7vtwb"]
++[ext_resource type="Texture2D" uid="uid://b77krrjliywe5" path="res://graphics/objects/gate.png" id="1_dghyb"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ywkr2"]
++size = Vector2(829.5, 313.5)
++
++[node name="Gate" type="StaticBody2D"]
++script = ExtResource("1_7vtwb")
++
++[node name="Gate" type="Sprite2D" parent="."]
++position = Vector2(528, -506)
++texture = ExtResource("1_dghyb")
++
++[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 +position = Vector2(-4, -9)
 +polygon = PackedVector2Array(-910, -1282, -907, 39, -878, 140, -809, 228, -732, 271, 153, 273, 157, -34, 1024, -34, 1027, 271, 1883, 271, 1947, 244, 1995, 213, 2045, 158, 2078, 93, 2087, 6, 2087, -1295)
- 
--[node name="Drone" parent="." instance=ExtResource("5_bixnc")]
--position = Vector2(445, 422)
-+[node name="Area2D" type="Area2D" parent="Gate"]
 +
-+[node name="CollisionShape2D" type="CollisionShape2D" parent="Gate/Area2D"]
++[node name="Area2D" type="Area2D" parent="."]
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 +position = Vector2(585.75, 229.25)
 +shape = SubResource("RectangleShape2D_ywkr2")
 +
-+[node name="Player" parent="." instance=ExtResource("4_5mwps")]
-+position = Vector2(494, 555)
- 
--[node name="Billboard" parent="." instance=ExtResource("4_h5nmv")]
--position = Vector2(328, 550)
--rotation = 0.47822
-+[connection signal="body_entered" from="Gate/Area2D" to="." method="_on_area_2d_body_entered"]
-+[connection signal="body_exited" from="Gate/Area2D" to="." method="_on_area_2d_body_exited"]
++[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 4829b63..eea3188 100644
+index eea3188..5f05f50 100644
 --- a/scenes/player/player.gd
 +++ b/scenes/player/player.gd
 @@ -1,5 +1,8 @@
  extends CharacterBody2D
  
-+var can_laser: bool = true
-+var can_grenade: bool = true
++signal laser
++signal grenade
 +
- func _process(_delta: float) -> void:
- 	# input
- 	var direction = Input.get_vector("left", "right", "up", "down")
-@@ -7,8 +10,19 @@ func _process(_delta: float) -> void:
- 	move_and_slide()
+ var can_laser: bool = true
+ var can_grenade: bool = true
+ 
+@@ -11,15 +14,15 @@ func _process(_delta: float) -> void:
  
  	# laser shooting input
--	if Input.is_action_pressed("primary action"):
-+	if Input.is_action_pressed("primary action") and can_laser:
- 		print("shooting mah lazers")
-+		can_laser = false
-+		$LaserReloadTimer.start()
-+		
+ 	if Input.is_action_pressed("primary action") and can_laser:
+-		print("shooting mah lazers")
+ 		can_laser = false
+ 		$LaserReloadTimer.start()
++		laser.emit()
+ 		
  	# shooting grenade input
--	if Input.is_action_pressed("secondary action"):
--		print("shoot grenade")                    
-+	if Input.is_action_pressed("secondary action") and can_grenade:
-+		print("shoot grenade")     
-+		can_grenade = false      
-+		$GrenadeReloadTimer.start()
-+
-+func _on_laser_reload_timer_timeout() -> void:
-+	can_laser = true
-+
-+func _on_grenade_reload_timer_timeout() -> void:
-+	can_grenade = true
-diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
-index 2c12072..f6b979c 100644
---- a/scenes/player/player.tscn
-+++ b/scenes/player/player.tscn
-@@ -15,3 +15,14 @@ texture = ExtResource("1_88vnt")
+-	if Input.is_action_pressed("secondary action") and can_grenade:
+-		print("shoot grenade")     
++	if Input.is_action_pressed("secondary action") and can_grenade: 
+ 		can_grenade = false      
+ 		$GrenadeReloadTimer.start()
++		grenade.emit()
  
- [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
- shape = SubResource("CircleShape2D_yb73b")
-+
-+[node name="LaserReloadTimer" type="Timer" parent="."]
-+wait_time = 0.5
-+one_shot = true
-+
-+[node name="GrenadeReloadTimer" type="Timer" parent="."]
-+wait_time = 2.0
-+one_shot = true
-+
-+[connection signal="timeout" from="LaserReloadTimer" to="." method="_on_laser_reload_timer_timeout"]
-+[connection signal="timeout" from="GrenadeReloadTimer" to="." method="_on_grenade_reload_timer_timeout"]
+ func _on_laser_reload_timer_timeout() -> void:
+ 	can_laser = true
