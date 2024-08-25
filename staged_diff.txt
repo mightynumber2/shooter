@@ -1,52 +1,223 @@
+diff --git a/scenes/enemies/drone.gd b/scenes/enemies/drone.gd
+new file mode 100644
+index 0000000..0aa9516
+--- /dev/null
++++ b/scenes/enemies/drone.gd
+@@ -0,0 +1,8 @@
++extends CharacterBody2D
++
++func _process(_delta: float) -> void:
++	var direction = Vector2.RIGHT
++	
++	velocity = direction * 100
++	
++	move_and_slide()
+diff --git a/scenes/enemies/drone.tscn b/scenes/enemies/drone.tscn
+new file mode 100644
+index 0000000..196fbbf
+--- /dev/null
++++ b/scenes/enemies/drone.tscn
+@@ -0,0 +1,16 @@
++[gd_scene load_steps=4 format=3 uid="uid://bohviaeh3wewt"]
++
++[ext_resource type="Texture2D" uid="uid://cu0bdtpwuj7vd" path="res://graphics/enemies/drone.png" id="1_7kis7"]
++[ext_resource type="Script" path="res://scenes/enemies/drone.gd" id="1_ehyur"]
++
++[sub_resource type="CircleShape2D" id="CircleShape2D_eo6x5"]
++radius = 74.0068
++
++[node name="Drone" type="CharacterBody2D"]
++script = ExtResource("1_ehyur")
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++texture = ExtResource("1_7kis7")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("CircleShape2D_eo6x5")
 diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
-index eb6cb38..4f7a6ea 100644
+index 4f7a6ea..7d5c9ce 100644
 --- a/scenes/levels/level.gd
 +++ b/scenes/levels/level.gd
-@@ -5,12 +5,11 @@ var test_array: Array[String] = ["Test", "Hello", "stuff"]
- func _ready() -> void:
- 	$Logo.rotation_degrees = 90
- 	
--	print(test_array[0])
--	
- func _process(delta: float) -> void:
- 	$Logo.rotation_degrees += 60 * delta
- 	
- 	if $Logo.position.x > 1000:
- 		$Logo.pos.x = 0
+@@ -1,15 +1,6 @@
+ extends Node2D
  
--	#print(Input.is_action_pressed("left"))
-+func test_function():
-+	print("this is a test function")
-diff --git a/scenes/levels/logo.gd b/scenes/levels/logo.gd
-index e0fd1ad..66c5d87 100644
---- a/scenes/levels/logo.gd
-+++ b/scenes/levels/logo.gd
-@@ -14,12 +14,13 @@ func _ready() -> void:
- 	
- 	test_scale = 2
- 	scale = Vector2(test_scale, test_scale)
+ var test_array: Array[String] = ["Test", "Hello", "stuff"]
 -
--
-+	print($"..".test_array)
-+	$"..".test_function()
-+	
- # Called every frame. 'delta' is the elapsed time since the previous frame.
- func _process(delta: float) -> void:
- 		pos.x += SPEED * delta
- 		position = pos
+-func _ready() -> void:
+-	$Logo.rotation_degrees = 90
 -	
-+		
- 	#test_scale += 1
- 	#scale = Vector2(test_scale, test_scale)
+-func _process(delta: float) -> void:
+-	$Logo.rotation_degrees += 60 * delta
+ 	
+-	if $Logo.position.x > 1000:
+-		$Logo.pos.x = 0
+-
+ func test_function():
+ 	print("this is a test function")
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+index d9901dc..6b22291 100644
+--- a/scenes/levels/level.tscn
++++ b/scenes/levels/level.tscn
+@@ -1,16 +1,23 @@
+-[gd_scene load_steps=5 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=6 format=3 uid="uid://qkshw585lie5"]
+ 
+-[ext_resource type="Texture2D" uid="uid://knmkjbj2v61g" path="res://icon.svg" id="1_5q468"]
+ [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
+-[ext_resource type="Script" path="res://scenes/levels/logo.gd" id="2_r7yfd"]
+ [ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
++[ext_resource type="PackedScene" uid="uid://liobbmceo63h" path="res://scenes/objects/billboard.tscn" id="4_h5nmv"]
++[ext_resource type="PackedScene" uid="uid://bohviaeh3wewt" path="res://scenes/enemies/drone.tscn" id="5_bixnc"]
++[ext_resource type="PackedScene" uid="uid://1vvyq6vdxpgg" path="res://scenes/objects/bed.tscn" id="5_ohxsv"]
+ 
+ [node name="Level" type="Node2D"]
+ script = ExtResource("1_mfxla")
+ 
+-[node name="Logo" type="Sprite2D" parent="."]
+-texture = ExtResource("1_5q468")
+-script = ExtResource("2_r7yfd")
++[node name="Bed" parent="." instance=ExtResource("5_ohxsv")]
++position = Vector2(790, 75)
+ 
+ [node name="Player" parent="." instance=ExtResource("4_5mwps")]
+-position = Vector2(779, 376)
++position = Vector2(776, 449)
++
++[node name="Drone" parent="." instance=ExtResource("5_bixnc")]
++position = Vector2(445, 422)
++
++[node name="Billboard" parent="." instance=ExtResource("4_h5nmv")]
++position = Vector2(328, 550)
++rotation = 0.47822
+diff --git a/scenes/levels/logo.gd b/scenes/levels/logo.gd
+deleted file mode 100644
+index 66c5d87..0000000
+--- a/scenes/levels/logo.gd
++++ /dev/null
+@@ -1,26 +0,0 @@
+-extends Sprite2D
+-
+-var pos: Vector2 = Vector2.ZERO
+-const SPEED: int = 200
+-var test_scale: int = 1
+-
+-# Called when the node enters the scene tree for the first time.
+-func _ready() -> void:
+-	pos = Vector2(300, 200)
+-	position = pos
+-	
+-	#var test_rotation = 45
+-	#rotation_degrees = test_rotation
+-	
+-	test_scale = 2
+-	scale = Vector2(test_scale, test_scale)
+-	print($"..".test_array)
+-	$"..".test_function()
+-	
+-# Called every frame. 'delta' is the elapsed time since the previous frame.
+-func _process(delta: float) -> void:
+-		pos.x += SPEED * delta
+-		position = pos
+-		
+-	#test_scale += 1
+-	#scale = Vector2(test_scale, test_scale)
+diff --git a/scenes/objects/bed.tscn b/scenes/objects/bed.tscn
+index f508128..177f0c5 100644
+--- a/scenes/objects/bed.tscn
++++ b/scenes/objects/bed.tscn
+@@ -1,21 +1,27 @@
+-[gd_scene load_steps=4 format=3 uid="uid://1vvyq6vdxpgg"]
++[gd_scene load_steps=5 format=3 uid="uid://1vvyq6vdxpgg"]
+ 
+ [ext_resource type="Texture2D" uid="uid://bme1vw22dyyn6" path="res://graphics/objects/bed.png" id="1_gqcxu"]
+ [ext_resource type="Texture2D" uid="uid://dgtp3iky1d30i" path="res://graphics/objects/pillow_large.png" id="2_ll1ei"]
+ [ext_resource type="Texture2D" uid="uid://bgopsokc55v3t" path="res://graphics/objects/pillow_small.png" id="3_8f55x"]
+ 
+-[node name="Bed" type="Node2D"]
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_txe2b"]
++size = Vector2(630, 368)
++
++[node name="Bed" type="StaticBody2D"]
+ 
+ [node name="Bed" type="Sprite2D" parent="."]
+ texture = ExtResource("1_gqcxu")
+ 
+-[node name="Pillow" type="Sprite2D" parent="Bed"]
++[node name="Pillow" type="Sprite2D" parent="."]
+ position = Vector2(228, -6)
+ rotation = -0.120428
+ scale = Vector2(0.885, 0.885)
+-skew = 0.0907571
++skew = 0.090757
+ texture = ExtResource("2_ll1ei")
+ 
+-[node name="PillowSmall" type="Sprite2D" parent="Bed"]
++[node name="PillowSmall" type="Sprite2D" parent="."]
+ position = Vector2(142, -4)
+ texture = ExtResource("3_8f55x")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("RectangleShape2D_txe2b")
+diff --git a/scenes/objects/billboard.tscn b/scenes/objects/billboard.tscn
+new file mode 100644
+index 0000000..c73208d
+--- /dev/null
++++ b/scenes/objects/billboard.tscn
+@@ -0,0 +1,15 @@
++[gd_scene load_steps=3 format=3 uid="uid://liobbmceo63h"]
++
++[ext_resource type="Texture2D" uid="uid://4w2awwp33b50" path="res://graphics/objects/Billboard.png" id="1_0fyje"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_nwmma"]
++size = Vector2(1228, 52)
++
++[node name="Billboard" type="StaticBody2D"]
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++position = Vector2(0, 7)
++texture = ExtResource("1_0fyje")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("RectangleShape2D_nwmma")
 diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 0df3489..2b6a667 100644
+index 2b6a667..4829b63 100644
 --- a/scenes/player/player.gd
 +++ b/scenes/player/player.gd
-@@ -8,6 +8,6 @@ func _process(delta: float) -> void:
+@@ -1,9 +1,10 @@
+-extends Node2D
++extends CharacterBody2D
+ 
+-func _process(delta: float) -> void:
++func _process(_delta: float) -> void:
+ 	# input
+ 	var direction = Input.get_vector("left", "right", "up", "down")
+-	position += direction * 500 * delta
++	velocity = direction * 500
++	move_and_slide()
+ 
  	# laser shooting input
  	if Input.is_action_pressed("primary action"):
- 		print("shooting mah lazers")
--	# shooting grendae input
-+	# shooting grenade input
- 	if Input.is_action_pressed("secondary action"):
- 		print("shoot grenade")                    
+diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
+index 5d5464e..2c12072 100644
+--- a/scenes/player/player.tscn
++++ b/scenes/player/player.tscn
+@@ -1,10 +1,17 @@
+-[gd_scene load_steps=3 format=3 uid="uid://rj3p5ydyve7d"]
++[gd_scene load_steps=4 format=3 uid="uid://rj3p5ydyve7d"]
+ 
+ [ext_resource type="Texture2D" uid="uid://cp3p31wodcl4w" path="res://graphics/player/player.png" id="1_88vnt"]
+ [ext_resource type="Script" path="res://scenes/player/player.gd" id="1_hipnd"]
+ 
+-[node name="Player" type="Node2D"]
++[sub_resource type="CircleShape2D" id="CircleShape2D_yb73b"]
++radius = 61.5224
++
++[node name="Player" type="CharacterBody2D"]
+ script = ExtResource("1_hipnd")
+ 
+ [node name="PlayerImage" type="Sprite2D" parent="."]
++position = Vector2(0, -35)
+ texture = ExtResource("1_88vnt")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("CircleShape2D_yb73b")
