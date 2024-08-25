@@ -1,132 +1,15 @@
-diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
-index 49825a5..ecb33e6 100644
---- a/scenes/levels/level.gd
-+++ b/scenes/levels/level.gd
-@@ -7,12 +7,15 @@ func _on_gate_player_entered_gate(body) -> void:
- 	print("body has entered")
- 	print(body)
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+index a055d1d..3c5dfe9 100644
+--- a/scenes/levels/level.tscn
++++ b/scenes/levels/level.tscn
+@@ -12,6 +12,10 @@ script = ExtResource("1_mfxla")
+ [node name="Player" parent="." instance=ExtResource("4_5mwps")]
+ position = Vector2(494, 555)
  
--func _on_player_laser(pos) -> void:
--	var laser = laser_scene.instantiate()
-+func _on_player_laser(pos, direction) -> void:
-+	var laser = laser_scene.instantiate() as Area2D
- 	laser.position = pos
-+	laser.rotation_degrees = rad_to_deg(direction.angle()) + 90
-+	laser.direction = direction
- 	$Projectiles.add_child(laser)
- 	
--func _on_player_grenade(pos) -> void:
--	var grenade = grenade_scene.instantiate()
-+func _on_player_grenade(pos, direction) -> void:
-+	var grenade = grenade_scene.instantiate() as RigidBody2D
- 	grenade.position = pos
-+	grenade.linear_velocity = direction * grenade.SPEED
- 	$Projectiles.add_child(grenade)
-diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 9b9dee0..c687f53 100644
---- a/scenes/player/player.gd
-+++ b/scenes/player/player.gd
-@@ -1,7 +1,7 @@
- extends CharacterBody2D
- 
--signal laser(pos)
--signal grenade
-+signal laser(pos, direction)
-+signal grenade(pos, direction)
- 
- var can_laser: bool = true
- var can_grenade: bool = true
-@@ -11,21 +11,24 @@ func _process(_delta: float) -> void:
- 	var direction = Input.get_vector("left", "right", "up", "down")
- 	velocity = direction * 500
- 	move_and_slide()
--
-+	# rotate
-+	look_at(get_global_mouse_position())
-+	
- 	# laser shooting input
-+	var player_direction = (get_global_mouse_position() - position).normalized()
- 	if Input.is_action_pressed("primary action") and can_laser:
- 		var laser_markers = $LaserStartPositions.get_children()
- 		var selected_laser = laser_markers[randi() % laser_markers.size()]
- 		can_laser = false
- 		$LaserReloadTimer.start()
--		laser.emit(selected_laser.global_position)
-+		laser.emit(selected_laser.global_position, player_direction)
- 		
- 	# shooting grenade input
- 	if Input.is_action_pressed("secondary action") and can_grenade:
- 		can_grenade = false      
- 		$GrenadeReloadTimer.start()
- 		var pos = $LaserStartPositions.get_children()[0].global_position
--		grenade.emit(pos)
-+		grenade.emit(pos, player_direction)
- 
- func _on_laser_reload_timer_timeout() -> void:
- 	can_laser = true
-diff --git a/scenes/player/player.tscn b/scenes/player/player.tscn
-index 3a590c9..a46f055 100644
---- a/scenes/player/player.tscn
-+++ b/scenes/player/player.tscn
-@@ -10,7 +10,8 @@ radius = 61.5224
- script = ExtResource("1_hipnd")
- 
- [node name="PlayerImage" type="Sprite2D" parent="."]
--position = Vector2(0, -35)
-+position = Vector2(34, 0)
-+rotation = 1.5708
- texture = ExtResource("1_88vnt")
- 
- [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-@@ -27,13 +28,13 @@ one_shot = true
- [node name="LaserStartPositions" type="Node2D" parent="."]
- 
- [node name="Marker2D" type="Marker2D" parent="LaserStartPositions"]
--position = Vector2(19, -129)
-+position = Vector2(125, 19)
- 
- [node name="Marker2D2" type="Marker2D" parent="LaserStartPositions"]
--position = Vector2(11, -126)
-+position = Vector2(123, 12)
- 
- [node name="Marker2D3" type="Marker2D" parent="LaserStartPositions"]
--position = Vector2(27, -126)
-+position = Vector2(123, 28)
- 
- [connection signal="timeout" from="LaserReloadTimer" to="." method="_on_laser_reload_timer_timeout"]
- [connection signal="timeout" from="GrenadeReloadTimer" to="." method="_on_grenade_reload_timer_timeout"]
-diff --git a/scenes/projectiles/grenade.gd b/scenes/projectiles/grenade.gd
-new file mode 100644
-index 0000000..5636456
---- /dev/null
-+++ b/scenes/projectiles/grenade.gd
-@@ -0,0 +1,3 @@
-+extends RigidBody2D
++[node name="Camera2D" type="Camera2D" parent="Player"]
++zoom = Vector2(0.5, 0.5)
++position_smoothing_enabled = true
 +
-+const SPEED = 750
-diff --git a/scenes/projectiles/grenade.tscn b/scenes/projectiles/grenade.tscn
-index 48b2e70..8753ec6 100644
---- a/scenes/projectiles/grenade.tscn
-+++ b/scenes/projectiles/grenade.tscn
-@@ -1,11 +1,20 @@
--[gd_scene load_steps=3 format=3 uid="uid://coa7he6xdjdxo"]
-+[gd_scene load_steps=5 format=3 uid="uid://coa7he6xdjdxo"]
+ [node name="Projectiles" type="Node2D" parent="."]
  
-+[ext_resource type="Script" path="res://scenes/projectiles/grenade.gd" id="1_g1psc"]
- [ext_resource type="Texture2D" uid="uid://nq11ajhn8eis" path="res://graphics/projectiles/grenade.png" id="1_w2tew"]
- 
-+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_x64pp"]
-+friction = 10.0
-+bounce = 0.4
-+
- [sub_resource type="CircleShape2D" id="CircleShape2D_v8wap"]
- radius = 78.0
- 
- [node name="Grenade" type="RigidBody2D"]
-+physics_material_override = SubResource("PhysicsMaterial_x64pp")
-+gravity_scale = 0.0
-+linear_damp = 1.6
-+script = ExtResource("1_g1psc")
- 
- [node name="Sprite2D" type="Sprite2D" parent="."]
- scale = Vector2(0.3, 0.3)
+ [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
