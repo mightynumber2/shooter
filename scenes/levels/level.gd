@@ -4,7 +4,7 @@ var laser_scene: PackedScene = preload("res://scenes/projectiles/laser.tscn")
 var grenade_scene: PackedScene = preload("res://scenes/projectiles/grenade.tscn")
 
 func _on_gate_player_entered_gate(body) -> void:
-	print("body has entered")
+	print("player has entered")
 	print(body)
 
 func _on_player_laser(pos, direction) -> void:
