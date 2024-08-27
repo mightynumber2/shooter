@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://qkshw585lie5"]
+[gd_scene load_steps=17 format=3 uid="uid://qkshw585lie5"]
 
 [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
 [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://cldx5ludqwvnr" path="res://graphics/tilesets/soil.png" id="9_rfc1d"]
 [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_syr3k"]
 [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_yt2rt"]
+[ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_nhp4p"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_er3v6"]
 resource_name = "walls"
@@ -74,34 +75,34 @@ layer_0/tile_data = PackedInt32Array(-3, 65537, 2, -4, 65537, 2, -5, 65537, 2, -
 layer_1/name = "Walls"
 layer_1/tile_data = PackedInt32Array(-4, 131072, 0, -5, 65536, 0, -6, 65536, 0, -7, 65536, 0, -8, 65536, 0, -9, 0, 0, -65530, 65536, 2, -65529, 65536, 0, -65528, 65536, 0, -65527, 65536, 0, -65526, 65536, 0, -65525, 131072, 1, 11, 0, 2, 65547, 0, 2, 131083, 0, 2, 196619, 0, 2, 262155, 0, 3, -131066, 0, 2, -196602, 0, 2, -262138, 0, 1)
 
-[node name="Moss4" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss4" type="Sprite2D" parent="Ground"]
 position = Vector2(2907, -31)
 texture = ExtResource("7_hr48u")
 
-[node name="Moss5" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss5" type="Sprite2D" parent="Ground"]
 position = Vector2(3844, -31)
 texture = ExtResource("7_hr48u")
 
-[node name="Moss7" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss7" type="Sprite2D" parent="Ground"]
 position = Vector2(4295, 672)
 rotation = 1.57032
 texture = ExtResource("7_hr48u")
 
-[node name="Moss8" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss8" type="Sprite2D" parent="Ground"]
 position = Vector2(4304, 1475)
-rotation = 4.6468
+rotation = -1.63639
 texture = ExtResource("7_hr48u")
 
-[node name="Moss2" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss2" type="Sprite2D" parent="Ground"]
 position = Vector2(4283, -20)
 texture = ExtResource("5_00jc3")
 
-[node name="Moss6" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss6" type="Sprite2D" parent="Ground"]
 position = Vector2(3543, -42.0001)
 rotation = -1.13123
 texture = ExtResource("5_00jc3")
 
-[node name="Moss1" type="Sprite2D" parent="Ground/TileMap"]
+[node name="Moss1" type="Sprite2D" parent="Ground"]
 position = Vector2(4212, 145)
 texture = ExtResource("4_dfb8s")
 
@@ -112,7 +113,11 @@ rotation = -2.18166
 [node name="SteamVent" parent="Ground" instance=ExtResource("10_yt2rt")]
 position = Vector2(-98, 492)
 
+[node name="LightFanAnimation" parent="Ground" instance=ExtResource("11_nhp4p")]
+position = Vector2(-2259, 1430)
+
 [node name="Gate" parent="." instance=ExtResource("2_olrab")]
+metadata/_edit_lock_ = true
 
 [node name="Player" parent="." instance=ExtResource("4_5mwps")]
 position = Vector2(596, 562)
@@ -123,6 +128,7 @@ position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
 [node name="Projectiles" type="Node2D" parent="."]
+metadata/_edit_lock_ = true
 
 [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
 [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
