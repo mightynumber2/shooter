@@ -14,8 +14,15 @@ script = ExtResource("1_dmjkk")
 speed = 2000
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(-1, 37)
+position = Vector2(-1, 38)
 texture = ExtResource("1_6fgxe")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_khuws")
+
+[node name="SelfDestructTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="SelfDestructTimer" to="." method="_on_timer_timeout"]

@@ -6,3 +6,6 @@ func _process(_delta: float) -> void:
 	velocity = direction * 100
 	
 	move_and_slide()
+	
+func hit():
+	print("drone hit")

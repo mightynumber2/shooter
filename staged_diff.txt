@@ -1,130 +1,83 @@
-diff --git a/scenes/houses/house.gd b/scenes/houses/house.gd
-new file mode 100644
-index 0000000..f815027
---- /dev/null
-+++ b/scenes/houses/house.gd
-@@ -0,0 +1,12 @@
-+extends Area2D
-+
-+signal player_entered
-+signal player_exited
-+
-+
-+func _on_body_entered(_body: Node2D) -> void:
-+	player_entered.emit()
-+
-+
-+func _on_body_exited(_body: Node2D) -> void:
-+	player_exited.emit()
-diff --git a/scenes/houses/house.tscn b/scenes/houses/house.tscn
-index 98ff6e7..bdeeada 100644
---- a/scenes/houses/house.tscn
-+++ b/scenes/houses/house.tscn
-@@ -1,6 +1,7 @@
--[gd_scene load_steps=35 format=3 uid="uid://c1bjrs4v5p6pv"]
-+[gd_scene load_steps=36 format=3 uid="uid://c1bjrs4v5p6pv"]
- 
- [ext_resource type="Texture2D" uid="uid://bva82xot8mx1p" path="res://graphics/tilesets/interior.png" id="1_78nq7"]
-+[ext_resource type="Script" path="res://scenes/houses/house.gd" id="1_evqk1"]
- [ext_resource type="PackedScene" uid="uid://ddpa18d10fi2j" path="res://scenes/objects/simple_light.tscn" id="2_6r56q"]
- [ext_resource type="PackedScene" uid="uid://h43n7jiv5v3f" path="res://scenes/objects/wall_light.tscn" id="3_h4uyg"]
- 
-@@ -207,6 +208,7 @@ sources/1 = SubResource("TileSetAtlasSource_xo1nl")
- 
- [node name="House" type="Area2D"]
- collision_layer = 16
-+script = ExtResource("1_evqk1")
- 
- [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
- position = Vector2(581.5, 583)
-@@ -251,3 +253,6 @@ position = Vector2(-623, 1659)
- rotation = -0.000379883
- scale = Vector2(1, 1)
- metadata/_edit_lock_ = true
-+
-+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
-+[connection signal="body_exited" from="." to="." method="_on_body_exited"]
-diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
-index 4875604..78780de 100644
---- a/scenes/levels/level.gd
-+++ b/scenes/levels/level.gd
-@@ -3,9 +3,11 @@ extends Node2D
- var laser_scene: PackedScene = preload("res://scenes/projectiles/laser.tscn")
- var grenade_scene: PackedScene = preload("res://scenes/projectiles/grenade.tscn")
- 
--func _on_gate_player_entered_gate(body) -> void:
--	print("player has entered")
--	print(body)
-+
-+func _on_gate_player_entered_gate(_body) -> void:
-+	var tween = create_tween()
-+	tween.tween_property($Player, "speed", 0, 0.8)
-+
- 
- func _on_player_laser(pos, direction) -> void:
- 	var laser = laser_scene.instantiate() as Area2D
-@@ -14,8 +16,21 @@ func _on_player_laser(pos, direction) -> void:
- 	laser.direction = direction
- 	$Projectiles.add_child(laser)
+diff --git a/scenes/enemies/drone.gd b/scenes/enemies/drone.gd
+index 0aa9516..f3be5f9 100644
+--- a/scenes/enemies/drone.gd
++++ b/scenes/enemies/drone.gd
+@@ -6,3 +6,6 @@ func _process(_delta: float) -> void:
+ 	velocity = direction * 100
  	
+ 	move_and_slide()
 +	
- func _on_player_grenade(pos, direction) -> void:
- 	var grenade = grenade_scene.instantiate() as RigidBody2D
- 	grenade.position = pos
- 	grenade.linear_velocity = direction * grenade.SPEED
- 	$Projectiles.add_child(grenade)
-+
-+
-+func _on_house_player_entered() -> void:
-+	var tween = get_tree().create_tween()
-+	tween.set_parallel(true)
-+	#tween.tween_property($Player, "modulate:a", 0, 1).from(0.5)
-+	tween.tween_property($Player/Camera2D, "zoom", Vector2(0.7, 0.7), 1).set_trans(tween.TRANS_QUAD)
-+
-+
-+func _on_house_player_exited() -> void:
-+	var tween = get_tree().create_tween()
-+	tween.tween_property($Player/Camera2D, "zoom", Vector2(0.5, 0.5), 2)
++func hit():
++	print("drone hit")
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index dadc292..69c0cf2 100644
+index 69c0cf2..cb24472 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -130,6 +130,8 @@ rotation_smoothing_enabled = true
+@@ -1,4 +1,4 @@
+-[gd_scene load_steps=17 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=18 format=3 uid="uid://qkshw585lie5"]
+ 
+ [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
+ [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
+@@ -13,6 +13,7 @@
+ [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_syr3k"]
+ [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_yt2rt"]
+ [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_nhp4p"]
++[ext_resource type="PackedScene" uid="uid://bohviaeh3wewt" path="res://scenes/enemies/drone.tscn" id="14_0qero"]
+ 
+ [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_er3v6"]
+ resource_name = "walls"
+@@ -130,6 +131,9 @@ rotation_smoothing_enabled = true
  [node name="Projectiles" type="Node2D" parent="."]
  metadata/_edit_lock_ = true
  
-+[connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]
-+[connection signal="player_exited" from="Ground/House" to="." method="_on_house_player_exited"]
++[node name="Drone" parent="." instance=ExtResource("14_0qero")]
++position = Vector2(286, 970)
++
+ [connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]
+ [connection signal="player_exited" from="Ground/House" to="." method="_on_house_player_exited"]
  [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
- [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
- [connection signal="laser" from="Player" to="." method="_on_player_laser"]
-diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 6376d42..6288ee8 100644
---- a/scenes/player/player.gd
-+++ b/scenes/player/player.gd
-@@ -6,10 +6,13 @@ signal grenade(pos, direction)
- var can_laser: bool = true
- var can_grenade: bool = true
+diff --git a/scenes/projectiles/laser.gd b/scenes/projectiles/laser.gd
+index 4131434..94fa99e 100644
+--- a/scenes/projectiles/laser.gd
++++ b/scenes/projectiles/laser.gd
+@@ -3,5 +3,18 @@ extends Area2D
+ @export var speed: int = 1000
+ var direction: Vector2 = Vector2.UP
  
-+@export var max_speed: int = 500
-+var speed: int = max_speed
++func _ready() -> void:
++	$SelfDestructTimer.start()
 +
- func _process(_delta: float) -> void:
- 	# input
- 	var direction = Input.get_vector("left", "right", "up", "down")
--	velocity = direction * 500
-+	velocity = direction * speed
- 	move_and_slide()
- 	# rotate
- 	look_at(get_global_mouse_position())
-@@ -31,8 +34,10 @@ func _process(_delta: float) -> void:
- 		var pos = $LaserStartPositions.get_children()[0].global_position
- 		grenade.emit(pos, player_direction)
+ func _process(delta: float) -> void:
+ 	position += direction * speed * delta
++
++
++func _on_body_entered(body: Node2D) -> void:
++	if "hit" in body:
++		body.hit()
++	queue_free()
++
++
++func _on_timer_timeout() -> void:
++	queue_free()
+diff --git a/scenes/projectiles/laser.tscn b/scenes/projectiles/laser.tscn
+index 0d790cc..57c442d 100644
+--- a/scenes/projectiles/laser.tscn
++++ b/scenes/projectiles/laser.tscn
+@@ -14,8 +14,15 @@ script = ExtResource("1_dmjkk")
+ speed = 2000
  
-+
- func _on_laser_reload_timer_timeout() -> void:
- 	can_laser = true
+ [node name="Sprite2D" type="Sprite2D" parent="."]
+-position = Vector2(-1, 37)
++position = Vector2(-1, 38)
+ texture = ExtResource("1_6fgxe")
  
+ [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+ shape = SubResource("CapsuleShape2D_khuws")
 +
- func _on_grenade_reload_timer_timeout() -> void:
- 	can_grenade = true
++[node name="SelfDestructTimer" type="Timer" parent="."]
++wait_time = 2.0
++one_shot = true
++
++[connection signal="body_entered" from="." to="." method="_on_body_entered"]
++[connection signal="timeout" from="SelfDestructTimer" to="." method="_on_timer_timeout"]
