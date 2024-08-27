@@ -6,10 +6,13 @@ signal grenade(pos, direction)
 var can_laser: bool = true
 var can_grenade: bool = true
 
+@export var max_speed: int = 500
+var speed: int = max_speed
+
 func _process(_delta: float) -> void:
 	# input
 	var direction = Input.get_vector("left", "right", "up", "down")
-	velocity = direction * 500
+	velocity = direction * speed
 	move_and_slide()
 	# rotate
 	look_at(get_global_mouse_position())
@@ -31,8 +34,10 @@ func _process(_delta: float) -> void:
 		var pos = $LaserStartPositions.get_children()[0].global_position
 		grenade.emit(pos, player_direction)
 
+
 func _on_laser_reload_timer_timeout() -> void:
 	can_laser = true
+
 
 func _on_grenade_reload_timer_timeout() -> void:
 	can_grenade = true

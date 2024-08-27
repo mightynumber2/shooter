@@ -1,545 +1,130 @@
+diff --git a/scenes/houses/house.gd b/scenes/houses/house.gd
+new file mode 100644
+index 0000000..f815027
+--- /dev/null
++++ b/scenes/houses/house.gd
+@@ -0,0 +1,12 @@
++extends Area2D
++
++signal player_entered
++signal player_exited
++
++
++func _on_body_entered(_body: Node2D) -> void:
++	player_entered.emit()
++
++
++func _on_body_exited(_body: Node2D) -> void:
++	player_exited.emit()
+diff --git a/scenes/houses/house.tscn b/scenes/houses/house.tscn
+index 98ff6e7..bdeeada 100644
+--- a/scenes/houses/house.tscn
++++ b/scenes/houses/house.tscn
+@@ -1,6 +1,7 @@
+-[gd_scene load_steps=35 format=3 uid="uid://c1bjrs4v5p6pv"]
++[gd_scene load_steps=36 format=3 uid="uid://c1bjrs4v5p6pv"]
+ 
+ [ext_resource type="Texture2D" uid="uid://bva82xot8mx1p" path="res://graphics/tilesets/interior.png" id="1_78nq7"]
++[ext_resource type="Script" path="res://scenes/houses/house.gd" id="1_evqk1"]
+ [ext_resource type="PackedScene" uid="uid://ddpa18d10fi2j" path="res://scenes/objects/simple_light.tscn" id="2_6r56q"]
+ [ext_resource type="PackedScene" uid="uid://h43n7jiv5v3f" path="res://scenes/objects/wall_light.tscn" id="3_h4uyg"]
+ 
+@@ -207,6 +208,7 @@ sources/1 = SubResource("TileSetAtlasSource_xo1nl")
+ 
+ [node name="House" type="Area2D"]
+ collision_layer = 16
++script = ExtResource("1_evqk1")
+ 
+ [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+ position = Vector2(581.5, 583)
+@@ -251,3 +253,6 @@ position = Vector2(-623, 1659)
+ rotation = -0.000379883
+ scale = Vector2(1, 1)
+ metadata/_edit_lock_ = true
++
++[connection signal="body_entered" from="." to="." method="_on_body_entered"]
++[connection signal="body_exited" from="." to="." method="_on_body_exited"]
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+index 4875604..78780de 100644
+--- a/scenes/levels/level.gd
++++ b/scenes/levels/level.gd
+@@ -3,9 +3,11 @@ extends Node2D
+ var laser_scene: PackedScene = preload("res://scenes/projectiles/laser.tscn")
+ var grenade_scene: PackedScene = preload("res://scenes/projectiles/grenade.tscn")
+ 
+-func _on_gate_player_entered_gate(body) -> void:
+-	print("player has entered")
+-	print(body)
++
++func _on_gate_player_entered_gate(_body) -> void:
++	var tween = create_tween()
++	tween.tween_property($Player, "speed", 0, 0.8)
++
+ 
+ func _on_player_laser(pos, direction) -> void:
+ 	var laser = laser_scene.instantiate() as Area2D
+@@ -14,8 +16,21 @@ func _on_player_laser(pos, direction) -> void:
+ 	laser.direction = direction
+ 	$Projectiles.add_child(laser)
+ 	
++	
+ func _on_player_grenade(pos, direction) -> void:
+ 	var grenade = grenade_scene.instantiate() as RigidBody2D
+ 	grenade.position = pos
+ 	grenade.linear_velocity = direction * grenade.SPEED
+ 	$Projectiles.add_child(grenade)
++
++
++func _on_house_player_entered() -> void:
++	var tween = get_tree().create_tween()
++	tween.set_parallel(true)
++	#tween.tween_property($Player, "modulate:a", 0, 1).from(0.5)
++	tween.tween_property($Player/Camera2D, "zoom", Vector2(0.7, 0.7), 1).set_trans(tween.TRANS_QUAD)
++
++
++func _on_house_player_exited() -> void:
++	var tween = get_tree().create_tween()
++	tween.tween_property($Player/Camera2D, "zoom", Vector2(0.5, 0.5), 2)
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index f2f5c44..dadc292 100644
+index dadc292..69c0cf2 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -1,4 +1,4 @@
--[gd_scene load_steps=16 format=3 uid="uid://qkshw585lie5"]
-+[gd_scene load_steps=17 format=3 uid="uid://qkshw585lie5"]
- 
- [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
- [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
-@@ -12,6 +12,7 @@
- [ext_resource type="Texture2D" uid="uid://cldx5ludqwvnr" path="res://graphics/tilesets/soil.png" id="9_rfc1d"]
- [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_syr3k"]
- [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_yt2rt"]
-+[ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_nhp4p"]
- 
- [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_er3v6"]
- resource_name = "walls"
-@@ -74,34 +75,34 @@ layer_0/tile_data = PackedInt32Array(-3, 65537, 2, -4, 65537, 2, -5, 65537, 2, -
- layer_1/name = "Walls"
- layer_1/tile_data = PackedInt32Array(-4, 131072, 0, -5, 65536, 0, -6, 65536, 0, -7, 65536, 0, -8, 65536, 0, -9, 0, 0, -65530, 65536, 2, -65529, 65536, 0, -65528, 65536, 0, -65527, 65536, 0, -65526, 65536, 0, -65525, 131072, 1, 11, 0, 2, 65547, 0, 2, 131083, 0, 2, 196619, 0, 2, 262155, 0, 3, -131066, 0, 2, -196602, 0, 2, -262138, 0, 1)
- 
--[node name="Moss4" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss4" type="Sprite2D" parent="Ground"]
- position = Vector2(2907, -31)
- texture = ExtResource("7_hr48u")
- 
--[node name="Moss5" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss5" type="Sprite2D" parent="Ground"]
- position = Vector2(3844, -31)
- texture = ExtResource("7_hr48u")
- 
--[node name="Moss7" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss7" type="Sprite2D" parent="Ground"]
- position = Vector2(4295, 672)
- rotation = 1.57032
- texture = ExtResource("7_hr48u")
- 
--[node name="Moss8" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss8" type="Sprite2D" parent="Ground"]
- position = Vector2(4304, 1475)
--rotation = 4.6468
-+rotation = -1.63639
- texture = ExtResource("7_hr48u")
- 
--[node name="Moss2" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss2" type="Sprite2D" parent="Ground"]
- position = Vector2(4283, -20)
- texture = ExtResource("5_00jc3")
- 
--[node name="Moss6" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss6" type="Sprite2D" parent="Ground"]
- position = Vector2(3543, -42.0001)
- rotation = -1.13123
- texture = ExtResource("5_00jc3")
- 
--[node name="Moss1" type="Sprite2D" parent="Ground/TileMap"]
-+[node name="Moss1" type="Sprite2D" parent="Ground"]
- position = Vector2(4212, 145)
- texture = ExtResource("4_dfb8s")
- 
-@@ -112,7 +113,11 @@ rotation = -2.18166
- [node name="SteamVent" parent="Ground" instance=ExtResource("10_yt2rt")]
- position = Vector2(-98, 492)
- 
-+[node name="LightFanAnimation" parent="Ground" instance=ExtResource("11_nhp4p")]
-+position = Vector2(-2259, 1430)
-+
- [node name="Gate" parent="." instance=ExtResource("2_olrab")]
-+metadata/_edit_lock_ = true
- 
- [node name="Player" parent="." instance=ExtResource("4_5mwps")]
- position = Vector2(596, 562)
-@@ -123,6 +128,7 @@ position_smoothing_enabled = true
- rotation_smoothing_enabled = true
- 
+@@ -130,6 +130,8 @@ rotation_smoothing_enabled = true
  [node name="Projectiles" type="Node2D" parent="."]
-+metadata/_edit_lock_ = true
+ metadata/_edit_lock_ = true
  
++[connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]
++[connection signal="player_exited" from="Ground/House" to="." method="_on_house_player_exited"]
  [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
  [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
-diff --git a/scenes/objects/light_fan_animation.tscn b/scenes/objects/light_fan_animation.tscn
-new file mode 100644
-index 0000000..20cd4c8
---- /dev/null
-+++ b/scenes/objects/light_fan_animation.tscn
-@@ -0,0 +1,214 @@
-+[gd_scene load_steps=51 format=3 uid="uid://b6pm1f16ljrv5"]
-+
-+[ext_resource type="Texture2D" uid="uid://c766w8kdxssji" path="res://graphics/lights/fan_animation/00000.png" id="1_igfyd"]
-+[ext_resource type="Texture2D" uid="uid://bmw1mrckyyat3" path="res://graphics/lights/fan_animation/00001.png" id="2_2u1jc"]
-+[ext_resource type="Texture2D" uid="uid://c4ujwpereilmd" path="res://graphics/lights/fan_animation/00002.png" id="3_1m3nw"]
-+[ext_resource type="Texture2D" uid="uid://relbxg1ewio1" path="res://graphics/lights/fan_animation/00003.png" id="4_u2tcy"]
-+[ext_resource type="Texture2D" uid="uid://bide5qcxw3x4f" path="res://graphics/lights/fan_animation/00004.png" id="5_irvf3"]
-+[ext_resource type="Texture2D" uid="uid://bbwo0dobxu0bb" path="res://graphics/lights/fan_animation/00005.png" id="6_5k5mu"]
-+[ext_resource type="Texture2D" uid="uid://taxjgc706oh1" path="res://graphics/lights/fan_animation/00006.png" id="7_y5xls"]
-+[ext_resource type="Texture2D" uid="uid://dwfie3xpgca02" path="res://graphics/lights/fan_animation/00007.png" id="8_sewdd"]
-+[ext_resource type="Texture2D" uid="uid://bkp83lnhd4ouj" path="res://graphics/lights/fan_animation/00008.png" id="9_lyg7w"]
-+[ext_resource type="Texture2D" uid="uid://c4rax7nu3v2wj" path="res://graphics/lights/fan_animation/00009.png" id="10_wkhnd"]
-+[ext_resource type="Texture2D" uid="uid://dnbqkkgu58d0b" path="res://graphics/lights/fan_animation/00010.png" id="11_7bnr1"]
-+[ext_resource type="Texture2D" uid="uid://b2c3wwxvu45ou" path="res://graphics/lights/fan_animation/00011.png" id="12_8arl0"]
-+[ext_resource type="Texture2D" uid="uid://bi2h8p3qjntw0" path="res://graphics/lights/fan_animation/00012.png" id="13_jbtdo"]
-+[ext_resource type="Texture2D" uid="uid://b6ihn1k4l83sn" path="res://graphics/lights/fan_animation/00013.png" id="14_73sc2"]
-+[ext_resource type="Texture2D" uid="uid://dtj3r4pbunxxa" path="res://graphics/lights/fan_animation/00014.png" id="15_p6xy5"]
-+[ext_resource type="Texture2D" uid="uid://q05pnr70ax4g" path="res://graphics/lights/fan_animation/00015.png" id="16_jc03n"]
-+[ext_resource type="Texture2D" uid="uid://dcr4kllv31ro3" path="res://graphics/lights/fan_animation/00016.png" id="17_8i0rp"]
-+[ext_resource type="Texture2D" uid="uid://c8jldo324jrhj" path="res://graphics/lights/fan_animation/00017.png" id="18_mwa3q"]
-+[ext_resource type="Texture2D" uid="uid://sbfgdrfy2lcp" path="res://graphics/lights/fan_animation/00018.png" id="19_pl44v"]
-+[ext_resource type="Texture2D" uid="uid://bkny67koruad1" path="res://graphics/lights/fan_animation/00019.png" id="20_xxuci"]
-+[ext_resource type="Texture2D" uid="uid://dtr5cp2a7552w" path="res://graphics/lights/fan_animation/00020.png" id="21_cqeuk"]
-+[ext_resource type="Texture2D" uid="uid://5yjd5jvdem53" path="res://graphics/lights/fan_animation/00021.png" id="22_wacy0"]
-+[ext_resource type="Texture2D" uid="uid://dvqjo0cyfhv1c" path="res://graphics/lights/fan_animation/00022.png" id="23_4j1h3"]
-+[ext_resource type="Texture2D" uid="uid://jfoulsdfypl8" path="res://graphics/lights/fan_animation/00023.png" id="24_xb6b5"]
-+[ext_resource type="Texture2D" uid="uid://dbctwktkds6tj" path="res://graphics/lights/fan_animation/00024.png" id="25_vy8g4"]
-+[ext_resource type="Texture2D" uid="uid://pcuqivdydtas" path="res://graphics/lights/fan_animation/00025.png" id="26_01ko5"]
-+[ext_resource type="Texture2D" uid="uid://c5ot38ki3dvmx" path="res://graphics/lights/fan_animation/00026.png" id="27_a44th"]
-+[ext_resource type="Texture2D" uid="uid://c42bgunmxdvvc" path="res://graphics/lights/fan_animation/00027.png" id="28_s1cyj"]
-+[ext_resource type="Texture2D" uid="uid://bqyolkp01apoy" path="res://graphics/lights/fan_animation/00028.png" id="29_m8tqv"]
-+[ext_resource type="Texture2D" uid="uid://dmeblj4twc3a5" path="res://graphics/lights/fan_animation/00029.png" id="30_okir5"]
-+[ext_resource type="Texture2D" uid="uid://dcpjgyxa030p3" path="res://graphics/lights/fan_animation/00030.png" id="31_257fh"]
-+[ext_resource type="Texture2D" uid="uid://bjakrisiuiq2x" path="res://graphics/lights/fan_animation/00031.png" id="32_yel0m"]
-+[ext_resource type="Texture2D" uid="uid://bx7wgscyiofc3" path="res://graphics/lights/fan_animation/00032.png" id="33_4ea3d"]
-+[ext_resource type="Texture2D" uid="uid://f7wxrupysrwq" path="res://graphics/lights/fan_animation/00033.png" id="34_cfwto"]
-+[ext_resource type="Texture2D" uid="uid://cim6j0lsckow" path="res://graphics/lights/fan_animation/00034.png" id="35_vuwrf"]
-+[ext_resource type="Texture2D" uid="uid://bbsypwftqlm52" path="res://graphics/lights/fan_animation/00035.png" id="36_mahds"]
-+[ext_resource type="Texture2D" uid="uid://ciijls12n7qdm" path="res://graphics/lights/fan_animation/00036.png" id="37_hn5wn"]
-+[ext_resource type="Texture2D" uid="uid://dfnnhnmexyiab" path="res://graphics/lights/fan_animation/00037.png" id="38_28jnx"]
-+[ext_resource type="Texture2D" uid="uid://dec843vuogf44" path="res://graphics/lights/fan_animation/00038.png" id="39_1rng3"]
-+[ext_resource type="Texture2D" uid="uid://bxhx8u1asdkse" path="res://graphics/lights/fan_animation/00039.png" id="40_yo707"]
-+[ext_resource type="Texture2D" uid="uid://dhe1johgw4oe1" path="res://graphics/lights/fan_animation/00040.png" id="41_aqhj7"]
-+[ext_resource type="Texture2D" uid="uid://nqf61iyxhiiu" path="res://graphics/lights/fan_animation/00041.png" id="42_jfbk0"]
-+[ext_resource type="Texture2D" uid="uid://orsug0fs3vri" path="res://graphics/lights/fan_animation/00042.png" id="43_cgcrr"]
-+[ext_resource type="Texture2D" uid="uid://dff3h3fe6dkrm" path="res://graphics/lights/fan_animation/00043.png" id="44_8qiww"]
-+[ext_resource type="Texture2D" uid="uid://cx64jjpvsx1sf" path="res://graphics/lights/fan_animation/00044.png" id="45_c7l5j"]
-+[ext_resource type="Texture2D" uid="uid://dahlhghda5xhd" path="res://graphics/lights/fan_animation/00045.png" id="46_xpuwx"]
-+[ext_resource type="Texture2D" uid="uid://bciyvftg5vtr1" path="res://graphics/lights/fan_animation/00046.png" id="47_ctput"]
-+[ext_resource type="Texture2D" uid="uid://bacoupjhqld80" path="res://graphics/lights/fan_animation/00047.png" id="48_e632h"]
-+[ext_resource type="Texture2D" uid="uid://c5j06fgfjohuq" path="res://graphics/lights/textures/circle.png" id="49_yqw7o"]
-+
-+[sub_resource type="SpriteFrames" id="SpriteFrames_o1b26"]
-+animations = [{
-+"frames": [{
-+"duration": 1.0,
-+"texture": ExtResource("1_igfyd")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("2_2u1jc")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("3_1m3nw")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("4_u2tcy")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("5_irvf3")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("6_5k5mu")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("7_y5xls")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("8_sewdd")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("9_lyg7w")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("10_wkhnd")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("11_7bnr1")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("12_8arl0")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("13_jbtdo")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("14_73sc2")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("15_p6xy5")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("16_jc03n")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("17_8i0rp")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("18_mwa3q")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("19_pl44v")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("20_xxuci")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("21_cqeuk")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("22_wacy0")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("23_4j1h3")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("24_xb6b5")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("25_vy8g4")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("26_01ko5")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("27_a44th")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("28_s1cyj")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("29_m8tqv")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("30_okir5")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("31_257fh")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("32_yel0m")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("33_4ea3d")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("34_cfwto")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("35_vuwrf")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("36_mahds")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("37_hn5wn")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("38_28jnx")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("39_1rng3")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("40_yo707")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("41_aqhj7")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("42_jfbk0")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("43_cgcrr")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("44_8qiww")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("45_c7l5j")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("46_xpuwx")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("47_ctput")
-+}, {
-+"duration": 1.0,
-+"texture": ExtResource("48_e632h")
-+}],
-+"loop": true,
-+"name": &"default",
-+"speed": 24.0
-+}]
-+
-+[node name="LightFanAnimation" type="AnimatedSprite2D"]
-+scale = Vector2(2, 2)
-+sprite_frames = SubResource("SpriteFrames_o1b26")
-+autoplay = "default"
-+frame_progress = 0.214229
-+
-+[node name="PointLight2D" type="PointLight2D" parent="."]
-+energy = 1.57
-+texture = ExtResource("49_yqw7o")
-+texture_scale = 1.25
-diff --git a/scenes/projectiles/grenade.gd b/scenes/projectiles/grenade.gd
-index 5636456..c21d59b 100644
---- a/scenes/projectiles/grenade.gd
-+++ b/scenes/projectiles/grenade.gd
-@@ -1,3 +1,6 @@
- extends RigidBody2D
+ [connection signal="laser" from="Player" to="." method="_on_player_laser"]
+diff --git a/scenes/player/player.gd b/scenes/player/player.gd
+index 6376d42..6288ee8 100644
+--- a/scenes/player/player.gd
++++ b/scenes/player/player.gd
+@@ -6,10 +6,13 @@ signal grenade(pos, direction)
+ var can_laser: bool = true
+ var can_grenade: bool = true
  
- const SPEED = 750
++@export var max_speed: int = 500
++var speed: int = max_speed
 +
-+func explode():
-+	$AnimationPlayer.play("Explosion")
-diff --git a/scenes/projectiles/grenade.tscn b/scenes/projectiles/grenade.tscn
-index 6f63b28..3e4ed01 100644
---- a/scenes/projectiles/grenade.tscn
-+++ b/scenes/projectiles/grenade.tscn
-@@ -1,7 +1,9 @@
--[gd_scene load_steps=5 format=3 uid="uid://coa7he6xdjdxo"]
-+[gd_scene load_steps=11 format=3 uid="uid://coa7he6xdjdxo"]
+ func _process(_delta: float) -> void:
+ 	# input
+ 	var direction = Input.get_vector("left", "right", "up", "down")
+-	velocity = direction * 500
++	velocity = direction * speed
+ 	move_and_slide()
+ 	# rotate
+ 	look_at(get_global_mouse_position())
+@@ -31,8 +34,10 @@ func _process(_delta: float) -> void:
+ 		var pos = $LaserStartPositions.get_children()[0].global_position
+ 		grenade.emit(pos, player_direction)
  
- [ext_resource type="Script" path="res://scenes/projectiles/grenade.gd" id="1_g1psc"]
- [ext_resource type="Texture2D" uid="uid://nq11ajhn8eis" path="res://graphics/projectiles/grenade.png" id="1_w2tew"]
-+[ext_resource type="Texture2D" uid="uid://b5d1b6lbcqpq6" path="res://graphics/explosions/explosion_3.png" id="3_5lfjt"]
-+[ext_resource type="Texture2D" uid="uid://c5j06fgfjohuq" path="res://graphics/lights/textures/circle.png" id="4_lhoj5"]
++
+ func _on_laser_reload_timer_timeout() -> void:
+ 	can_laser = true
  
- [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_x64pp"]
- friction = 10.0
-@@ -10,6 +12,186 @@ bounce = 0.4
- [sub_resource type="CircleShape2D" id="CircleShape2D_v8wap"]
- radius = 78.0
- 
-+[sub_resource type="Animation" id="Animation_0uiae"]
-+resource_name = "Explosion"
-+length = 2.4
-+step = 0.1
-+tracks/0/type = "value"
-+tracks/0/imported = false
-+tracks/0/enabled = true
-+tracks/0/path = NodePath("Explosion:frame")
-+tracks/0/interp = 1
-+tracks/0/loop_wrap = true
-+tracks/0/keys = {
-+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2),
-+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+"update": 1,
-+"values": [27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 48]
-+}
-+tracks/1/type = "method"
-+tracks/1/imported = false
-+tracks/1/enabled = true
-+tracks/1/path = NodePath(".")
-+tracks/1/interp = 1
-+tracks/1/loop_wrap = true
-+tracks/1/keys = {
-+"times": PackedFloat32Array(2.4),
-+"transitions": PackedFloat32Array(1),
-+"values": [{
-+"args": [],
-+"method": &"queue_free"
-+}]
-+}
-+tracks/2/type = "value"
-+tracks/2/imported = false
-+tracks/2/enabled = true
-+tracks/2/path = NodePath("Sprite2D:visible")
-+tracks/2/interp = 1
-+tracks/2/loop_wrap = true
-+tracks/2/keys = {
-+"times": PackedFloat32Array(0, 0.9),
-+"transitions": PackedFloat32Array(1, 1),
-+"update": 1,
-+"values": [true, false]
-+}
-+tracks/3/type = "value"
-+tracks/3/imported = false
-+tracks/3/enabled = true
-+tracks/3/path = NodePath("Explosion:modulate")
-+tracks/3/interp = 2
-+tracks/3/loop_wrap = true
-+tracks/3/keys = {
-+"times": PackedFloat32Array(1.5, 2.4),
-+"transitions": PackedFloat32Array(1, 1),
-+"update": 0,
-+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
-+}
-+tracks/4/type = "value"
-+tracks/4/imported = false
-+tracks/4/enabled = true
-+tracks/4/path = NodePath("PointLight2D:visible")
-+tracks/4/interp = 1
-+tracks/4/loop_wrap = true
-+tracks/4/keys = {
-+"times": PackedFloat32Array(0, 0.9),
-+"transitions": PackedFloat32Array(1, 1),
-+"update": 1,
-+"values": [true, false]
-+}
 +
-+[sub_resource type="Animation" id="Animation_72nwi"]
-+length = 0.001
-+tracks/0/type = "value"
-+tracks/0/imported = false
-+tracks/0/enabled = true
-+tracks/0/path = NodePath("Explosion:frame")
-+tracks/0/interp = 1
-+tracks/0/loop_wrap = true
-+tracks/0/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 1,
-+"values": [0]
-+}
-+tracks/1/type = "value"
-+tracks/1/imported = false
-+tracks/1/enabled = true
-+tracks/1/path = NodePath("PointLight2D:energy")
-+tracks/1/interp = 1
-+tracks/1/loop_wrap = true
-+tracks/1/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 0,
-+"values": [1.57]
-+}
-+tracks/2/type = "value"
-+tracks/2/imported = false
-+tracks/2/enabled = true
-+tracks/2/path = NodePath("Sprite2D:visible")
-+tracks/2/interp = 1
-+tracks/2/loop_wrap = true
-+tracks/2/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 1,
-+"values": [true]
-+}
-+tracks/3/type = "value"
-+tracks/3/imported = false
-+tracks/3/enabled = true
-+tracks/3/path = NodePath("Explosion:modulate")
-+tracks/3/interp = 1
-+tracks/3/loop_wrap = true
-+tracks/3/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 0,
-+"values": [Color(1, 1, 1, 1)]
-+}
-+tracks/4/type = "value"
-+tracks/4/imported = false
-+tracks/4/enabled = true
-+tracks/4/path = NodePath("PointLight2D:visible")
-+tracks/4/interp = 1
-+tracks/4/loop_wrap = true
-+tracks/4/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 1,
-+"values": [true]
-+}
-+
-+[sub_resource type="Animation" id="Animation_cc8lc"]
-+resource_name = "Blinking"
-+length = 2.1
-+step = 0.1
-+tracks/0/type = "value"
-+tracks/0/imported = false
-+tracks/0/enabled = true
-+tracks/0/path = NodePath("PointLight2D:energy")
-+tracks/0/interp = 1
-+tracks/0/loop_wrap = true
-+tracks/0/keys = {
-+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2),
-+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-+"update": 0,
-+"values": [12.0, 0.0, 12.0, 0.0, 12.0, 0.0, 12.0, 0.0, 12.0, 0.0, 12.0]
-+}
-+tracks/1/type = "method"
-+tracks/1/imported = false
-+tracks/1/enabled = true
-+tracks/1/path = NodePath(".")
-+tracks/1/interp = 1
-+tracks/1/loop_wrap = true
-+tracks/1/keys = {
-+"times": PackedFloat32Array(2),
-+"transitions": PackedFloat32Array(1),
-+"values": [{
-+"args": [],
-+"method": &"explode"
-+}]
-+}
-+tracks/2/type = "value"
-+tracks/2/imported = false
-+tracks/2/enabled = true
-+tracks/2/path = NodePath("PointLight2D:visible")
-+tracks/2/interp = 1
-+tracks/2/loop_wrap = true
-+tracks/2/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 1,
-+"values": [true]
-+}
-+
-+[sub_resource type="AnimationLibrary" id="AnimationLibrary_57lm8"]
-+_data = {
-+"Blinking": SubResource("Animation_cc8lc"),
-+"Explosion": SubResource("Animation_0uiae"),
-+"RESET": SubResource("Animation_72nwi")
-+}
-+
- [node name="Grenade" type="RigidBody2D"]
- collision_layer = 8
- collision_mask = 15
-@@ -18,10 +200,27 @@ gravity_scale = 0.0
- linear_damp = 1.6
- script = ExtResource("1_g1psc")
- 
-+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-+scale = Vector2(0.3, 0.3)
-+shape = SubResource("CircleShape2D_v8wap")
-+
- [node name="Sprite2D" type="Sprite2D" parent="."]
- scale = Vector2(0.3, 0.3)
- texture = ExtResource("1_w2tew")
- 
--[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
--scale = Vector2(0.3, 0.3)
--shape = SubResource("CircleShape2D_v8wap")
-+[node name="Explosion" type="Sprite2D" parent="."]
-+texture = ExtResource("3_5lfjt")
-+hframes = 8
-+vframes = 8
-+
-+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-+libraries = {
-+"": SubResource("AnimationLibrary_57lm8")
-+}
-+autoplay = "Blinking"
-+
-+[node name="PointLight2D" type="PointLight2D" parent="."]
-+color = Color(0.526663, 0.0863397, 0.190531, 1)
-+energy = 1.57
-+texture = ExtResource("4_lhoj5")
-+texture_scale = 0.03
+ func _on_grenade_reload_timer_timeout() -> void:
+ 	can_grenade = true
