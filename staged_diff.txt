@@ -1,39 +1,109 @@
+diff --git a/globals/globals.gd b/globals/globals.gd
+new file mode 100644
+index 0000000..1e5d43b
+--- /dev/null
++++ b/globals/globals.gd
+@@ -0,0 +1,4 @@
++extends Node
++
++var laser_amount: int = 20
++var grenade_amount: int = 5
+diff --git a/project.godot b/project.godot
+index 14002be..0def38c 100644
+--- a/project.godot
++++ b/project.godot
+@@ -15,6 +15,10 @@ run/main_scene="res://scenes/levels/outside.tscn"
+ config/features=PackedStringArray("4.3", "Mobile")
+ config/icon="res://icon.svg"
+ 
++[autoload]
++
++Globals="*res://globals/globals.gd"
++
+ [input]
+ 
+ left={
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+index a1eeba1..3e81cc8 100644
+--- a/scenes/levels/level.gd
++++ b/scenes/levels/level.gd
+@@ -11,13 +11,14 @@ func _on_player_laser(pos, direction) -> void:
+ 	laser.rotation_degrees = rad_to_deg(direction.angle()) + 90
+ 	laser.direction = direction
+ 	$Projectiles.add_child(laser)
+-	
++	$UI.update_laser_text()
+ 	
+ func _on_player_grenade(pos, direction) -> void:
+ 	var grenade = grenade_scene.instantiate() as RigidBody2D
+ 	grenade.position = pos
+ 	grenade.linear_velocity = direction * grenade.SPEED
+ 	$Projectiles.add_child(grenade)
++	$UI.update_grenade_text()
+ 
+ 
+ func _on_house_player_entered() -> void:
+diff --git a/scenes/player/player.gd b/scenes/player/player.gd
+index 6288ee8..4a7cec4 100644
+--- a/scenes/player/player.gd
++++ b/scenes/player/player.gd
+@@ -19,7 +19,8 @@ func _process(_delta: float) -> void:
+ 	
+ 	# laser shooting input
+ 	var player_direction = (get_global_mouse_position() - position).normalized()
+-	if Input.is_action_pressed("primary action") and can_laser:
++	if Input.is_action_pressed("primary action") and can_laser and Globals.laser_amount > 0:
++		Globals.laser_amount -= 1
+ 		$GPUParticles2D.emitting = true
+ 		var laser_markers = $LaserStartPositions.get_children()
+ 		var selected_laser = laser_markers[randi() % laser_markers.size()]
+@@ -28,7 +29,8 @@ func _process(_delta: float) -> void:
+ 		laser.emit(selected_laser.global_position, player_direction)
+ 		
+ 	# shooting grenade input
+-	if Input.is_action_pressed("secondary action") and can_grenade:
++	if Input.is_action_pressed("secondary action") and can_grenade and Globals.grenade_amount > 0:
++		Globals.grenade_amount -= 1
+ 		can_grenade = false      
+ 		$GrenadeReloadTimer.start()
+ 		var pos = $LaserStartPositions.get_children()[0].global_position
+diff --git a/scenes/user interface/ui.gd b/scenes/user interface/ui.gd
+new file mode 100644
+index 0000000..d7a9b9e
+--- /dev/null
++++ b/scenes/user interface/ui.gd	
+@@ -0,0 +1,14 @@
++extends CanvasLayer
++
++@onready var laser_label: Label = $LaserCounter/VBoxContainer/Label
++@onready var grenade_label: Label = $GrenadeCounter/VBoxContainer/Label
++
++func _ready() -> void:
++	update_laser_text()
++	update_grenade_text()
++
++func update_laser_text():
++	laser_label.text = str(Globals.laser_amount)
++
++func update_grenade_text():
++	grenade_label.text = str(Globals.grenade_amount)
 diff --git a/scenes/user interface/ui.tscn b/scenes/user interface/ui.tscn
-index c6eb771..9cabb70 100644
+index 9cabb70..2ffbe61 100644
 --- a/scenes/user interface/ui.tscn	
 +++ b/scenes/user interface/ui.tscn	
-@@ -1,8 +1,10 @@
--[gd_scene load_steps=4 format=3 uid="uid://wrxsls1ihpxn"]
-+[gd_scene load_steps=6 format=3 uid="uid://wrxsls1ihpxn"]
+@@ -1,12 +1,14 @@
+-[gd_scene load_steps=6 format=3 uid="uid://wrxsls1ihpxn"]
++[gd_scene load_steps=7 format=3 uid="uid://wrxsls1ihpxn"]
  
  [ext_resource type="Texture2D" uid="uid://bd571wwoln2b4" path="res://graphics/ui/bullet.png" id="1_wqhtd"]
++[ext_resource type="Script" path="res://scenes/user interface/ui.gd" id="1_yykbp"]
  [ext_resource type="Texture2D" uid="uid://bl6nq8g7upod5" path="res://graphics/ui/grenade.png" id="2_dos55"]
  [ext_resource type="Theme" uid="uid://byu7j24jnxdx2" path="res://scenes/user interface/main_theme.tres" id="2_va6dc"]
-+[ext_resource type="Texture2D" uid="uid://doplaivcmr5ks" path="res://graphics/ui/progress_bar/bg.png" id="4_phw6g"]
-+[ext_resource type="Texture2D" uid="uid://766e2sqq0o3k" path="res://graphics/ui/progress_bar/progress.png" id="5_iayuy"]
+ [ext_resource type="Texture2D" uid="uid://doplaivcmr5ks" path="res://graphics/ui/progress_bar/bg.png" id="4_phw6g"]
+ [ext_resource type="Texture2D" uid="uid://766e2sqq0o3k" path="res://graphics/ui/progress_bar/progress.png" id="5_iayuy"]
  
  [node name="UI" type="CanvasLayer"]
++script = ExtResource("1_yykbp")
  
-@@ -64,3 +66,22 @@ layout_direction = 1
- layout_mode = 2
- texture = ExtResource("2_dos55")
- expand_mode = 4
-+
-+[node name="MarginContainer" type="MarginContainer" parent="."]
-+anchors_preset = 7
-+anchor_left = 0.5
-+anchor_top = 1.0
-+anchor_right = 0.5
-+anchor_bottom = 1.0
-+offset_left = -150.0
-+offset_top = -40.0
-+offset_right = 150.0
-+grow_horizontal = 2
-+grow_vertical = 0
-+theme_override_constants/margin_bottom = 30
-+
-+[node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer"]
-+layout_mode = 2
-+value = 80.0
-+texture_under = ExtResource("4_phw6g")
-+texture_progress = ExtResource("5_iayuy")
+ [node name="LaserCounter" type="Control" parent="."]
+ layout_mode = 3
