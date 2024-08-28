@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://qkshw585lie5"]
+[gd_scene load_steps=4 format=3 uid="uid://qkshw585lie5"]
 
 [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
+[ext_resource type="PackedScene" uid="uid://wrxsls1ihpxn" path="res://scenes/user interface/ui.tscn" id="3_u3c0l"]
 [ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
 
 [node name="Level" type="Node2D"]
@@ -20,6 +21,8 @@ position_smoothing_enabled = true
 rotation_smoothing_enabled = true
 
 [node name="Lights" type="Node2D" parent="."]
+
+[node name="UI" parent="." instance=ExtResource("3_u3c0l")]
 
 [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
 [connection signal="laser" from="Player" to="." method="_on_player_laser"]

@@ -1,98 +1,106 @@
-diff --git a/scenes/levels/inside.gd b/scenes/levels/inside.gd
-index e864cb8..5896a9b 100644
---- a/scenes/levels/inside.gd
-+++ b/scenes/levels/inside.gd
-@@ -1,6 +1,8 @@
- extends LevelParent
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+index d5b7e67..91a060a 100644
+--- a/scenes/levels/level.tscn
++++ b/scenes/levels/level.tscn
+@@ -1,6 +1,7 @@
+-[gd_scene load_steps=3 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=4 format=3 uid="uid://qkshw585lie5"]
  
-+@export var outside_level_scene: PackedScene
+ [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
++[ext_resource type="PackedScene" uid="uid://wrxsls1ihpxn" path="res://scenes/user interface/ui.tscn" id="3_u3c0l"]
+ [ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
  
- func _on_exit_gate_area_body_entered(_body: Node2D) -> void:
- 	var tween = create_tween()
- 	tween.tween_property($Player, "speed", 0, 0.8)
-+	get_tree().call_deferred("change_scene_to_packed", outside_level_scene)
-diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
-index 1641164..786baad 100644
---- a/scenes/levels/inside.tscn
-+++ b/scenes/levels/inside.tscn
-@@ -1,9 +1,10 @@
--[gd_scene load_steps=13 format=3 uid="uid://c4n6f3okesapm"]
-+[gd_scene load_steps=14 format=3 uid="uid://c4n6f3okesapm"]
+ [node name="Level" type="Node2D"]
+@@ -21,5 +22,7 @@ rotation_smoothing_enabled = true
  
- [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_nf3sw"]
- [ext_resource type="TileSet" uid="uid://bmb0vbdyaxm0c" path="res://scenes/levels/house.tres" id="2_2qtls"]
- [ext_resource type="Script" path="res://scenes/levels/inside.gd" id="2_7eopj"]
- [ext_resource type="Texture2D" uid="uid://r7iys04rc6t5" path="res://graphics/ground/dirt.png" id="2_bg52o"]
-+[ext_resource type="PackedScene" uid="uid://bgleerevfpbtf" path="res://scenes/levels/outside.tscn" id="3_q5bw0"]
- [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="4_4nmk8"]
- [ext_resource type="PackedScene" uid="uid://h43n7jiv5v3f" path="res://scenes/objects/wall_light.tscn" id="4_wgb63"]
- [ext_resource type="PackedScene" uid="uid://ddpa18d10fi2j" path="res://scenes/objects/simple_light.tscn" id="5_je8gl"]
-@@ -17,6 +18,7 @@ size = Vector2(397, 737)
+ [node name="Lights" type="Node2D" parent="."]
  
- [node name="Inside" instance=ExtResource("1_nf3sw")]
- script = ExtResource("2_7eopj")
-+outside_level_scene = ExtResource("3_q5bw0")
- 
- [node name="Sprite2D" type="Sprite2D" parent="Ground" index="0"]
- texture_repeat = 2
-@@ -94,7 +96,7 @@ position = Vector2(-4063, 1975)
- rotation = -1.5708
- 
- [node name="Player" parent="." index="2"]
--position = Vector2(3944, 346)
-+position = Vector2(3941, 365)
- metadata/_edit_group_ = true
- 
- [node name="PointLight2D" type="PointLight2D" parent="Player" index="8"]
-diff --git a/scenes/levels/outside.gd b/scenes/levels/outside.gd
-index 3d12e1a..9d7b867 100644
---- a/scenes/levels/outside.gd
-+++ b/scenes/levels/outside.gd
-@@ -4,3 +4,8 @@ extends LevelParent
- func _on_gate_player_entered_gate(_body: Variant) -> void:
- 	var tween = create_tween()
- 	tween.tween_property($Player, "speed", 0, 0.8)
-+	#get_tree().change_scene_to_file("res://scenes/levels/inside.tscn")
-+	call_deferred("change_scene", "res://scenes/levels/inside.tscn")
-+	
-+func change_scene(scene_path: String) -> void:
-+	get_tree().change_scene_to_file(scene_path)
-diff --git a/scenes/levels/outside.tscn b/scenes/levels/outside.tscn
-index 2ce258f..4477fef 100644
---- a/scenes/levels/outside.tscn
-+++ b/scenes/levels/outside.tscn
-@@ -1,4 +1,4 @@
--[gd_scene load_steps=19 format=3 uid="uid://bgleerevfpbtf"]
-+[gd_scene load_steps=17 format=3 uid="uid://bgleerevfpbtf"]
- 
- [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_0tbmh"]
- [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_car28"]
-@@ -13,8 +13,6 @@
- [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_6lamu"]
- [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_6vblr"]
- [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_l6q37"]
--[ext_resource type="PackedScene" uid="uid://cek6j1x67dt38" path="res://scenes/container/toilet.tscn" id="14_1ewk5"]
--[ext_resource type="PackedScene" uid="uid://bvmitrxjt7t43" path="res://scenes/container/crate.tscn" id="15_4ccok"]
- 
- [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wux4t"]
- resource_name = "walls"
-@@ -119,17 +117,7 @@ position = Vector2(-2259, 1430)
- [node name="Gate" parent="." index="1" instance=ExtResource("2_car28")]
- position = Vector2(243, -266)
- 
--[node name="Toilet" parent="." index="2" instance=ExtResource("14_1ewk5")]
--position = Vector2(798, 845)
--collision_layer = 1
--collision_mask = 1
--
--[node name="Crate" parent="." index="3" instance=ExtResource("15_4ccok")]
--position = Vector2(1319, 607)
--collision_layer = 1
--collision_mask = 1
--
--[node name="Player" parent="." index="5"]
--position = Vector2(532, 566)
-+[node name="Player" parent="." index="3"]
-+position = Vector2(827, 277)
- 
- [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
++[node name="UI" parent="." instance=ExtResource("3_u3c0l")]
++
+ [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
+ [connection signal="laser" from="Player" to="." method="_on_player_laser"]
+diff --git a/scenes/user interface/main_theme.tres b/scenes/user interface/main_theme.tres
+new file mode 100644
+index 0000000..3958512
+--- /dev/null
++++ b/scenes/user interface/main_theme.tres	
+@@ -0,0 +1,7 @@
++[gd_resource type="Theme" load_steps=2 format=3 uid="uid://byu7j24jnxdx2"]
++
++[ext_resource type="FontFile" uid="uid://b0apk0hso63xq" path="res://graphics/ui/subatomic.tsoonami.ttf" id="1_ut1p2"]
++
++[resource]
++default_font = ExtResource("1_ut1p2")
++default_font_size = 25
+diff --git a/scenes/user interface/ui.tscn b/scenes/user interface/ui.tscn
+new file mode 100644
+index 0000000..c6eb771
+--- /dev/null
++++ b/scenes/user interface/ui.tscn	
+@@ -0,0 +1,66 @@
++[gd_scene load_steps=4 format=3 uid="uid://wrxsls1ihpxn"]
++
++[ext_resource type="Texture2D" uid="uid://bd571wwoln2b4" path="res://graphics/ui/bullet.png" id="1_wqhtd"]
++[ext_resource type="Texture2D" uid="uid://bl6nq8g7upod5" path="res://graphics/ui/grenade.png" id="2_dos55"]
++[ext_resource type="Theme" uid="uid://byu7j24jnxdx2" path="res://scenes/user interface/main_theme.tres" id="2_va6dc"]
++
++[node name="UI" type="CanvasLayer"]
++
++[node name="LaserCounter" type="Control" parent="."]
++layout_mode = 3
++anchor_left = 0.01
++anchor_top = 0.92
++anchor_right = 0.01
++anchor_bottom = 1.0
++offset_top = -40.0
++offset_right = 40.0
++grow_vertical = 0
++
++[node name="VBoxContainer" type="VBoxContainer" parent="LaserCounter"]
++layout_mode = 0
++offset_right = 40.0
++offset_bottom = 40.0
++
++[node name="Label" type="Label" parent="LaserCounter/VBoxContainer"]
++layout_mode = 2
++theme = ExtResource("2_va6dc")
++text = "20
++"
++horizontal_alignment = 1
++
++[node name="TextureRect" type="TextureRect" parent="LaserCounter/VBoxContainer"]
++layout_mode = 2
++texture = ExtResource("1_wqhtd")
++expand_mode = 4
++
++[node name="GrenadeCounter" type="Control" parent="."]
++layout_mode = 3
++anchor_left = 0.06
++anchor_top = 0.92
++anchor_right = 0.07
++anchor_bottom = 1.0
++offset_top = -40.0
++offset_right = 40.0
++grow_horizontal = 2
++grow_vertical = 2
++
++[node name="VBoxContainer" type="VBoxContainer" parent="GrenadeCounter"]
++layout_mode = 1
++anchors_preset = 15
++anchor_right = 1.0
++anchor_bottom = 1.0
++grow_horizontal = 2
++grow_vertical = 2
++
++[node name="Label" type="Label" parent="GrenadeCounter/VBoxContainer"]
++layout_mode = 2
++theme = ExtResource("2_va6dc")
++text = "5
++"
++horizontal_alignment = 1
++
++[node name="TextureRect" type="TextureRect" parent="GrenadeCounter/VBoxContainer"]
++layout_direction = 1
++layout_mode = 2
++texture = ExtResource("2_dos55")
++expand_mode = 4
