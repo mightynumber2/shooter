@@ -1,83 +1,585 @@
-diff --git a/scenes/enemies/drone.gd b/scenes/enemies/drone.gd
-index 0aa9516..f3be5f9 100644
---- a/scenes/enemies/drone.gd
-+++ b/scenes/enemies/drone.gd
-@@ -6,3 +6,6 @@ func _process(_delta: float) -> void:
- 	velocity = direction * 100
- 	
- 	move_and_slide()
-+	
+diff --git a/project.godot b/project.godot
+index 43444b4..14002be 100644
+--- a/project.godot
++++ b/project.godot
+@@ -11,7 +11,7 @@ config_version=5
+ [application]
+ 
+ config/name="Shooter"
+-run/main_scene="res://scenes/levels/level.tscn"
++run/main_scene="res://scenes/levels/outside.tscn"
+ config/features=PackedStringArray("4.3", "Mobile")
+ config/icon="res://icon.svg"
+ 
+diff --git a/scenes/container/cra1725.tmp b/scenes/container/cra1725.tmp
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/cra1725.tmp
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/cra3E2E.tmp b/scenes/container/cra3E2E.tmp
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/cra3E2E.tmp
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/cra7816.tmp b/scenes/container/cra7816.tmp
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/cra7816.tmp
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/cra9763.tmp b/scenes/container/cra9763.tmp
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/cra9763.tmp
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/craCA30.tmp b/scenes/container/craCA30.tmp
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/craCA30.tmp
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/crate.gd b/scenes/container/crate.gd
+new file mode 100644
+index 0000000..038db46
+--- /dev/null
++++ b/scenes/container/crate.gd
+@@ -0,0 +1,4 @@
++extends ItemContainer
++
 +func hit():
-+	print("drone hit")
++	print("crate")
+diff --git a/scenes/container/crate.tscn b/scenes/container/crate.tscn
+new file mode 100644
+index 0000000..1b0e265
+--- /dev/null
++++ b/scenes/container/crate.tscn
+@@ -0,0 +1,23 @@
++[gd_scene load_steps=6 format=3 uid="uid://bvmitrxjt7t43"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_7h6lm"]
++[ext_resource type="Script" path="res://scenes/container/crate.gd" id="2_2qr73"]
++[ext_resource type="Texture2D" uid="uid://bmisbv1iring3" path="res://graphics/objects/box/base.png" id="3_hb2sa"]
++[ext_resource type="Texture2D" uid="uid://c17267cusnkx8" path="res://graphics/objects/box/lid.png" id="4_jvve1"]
++
++[sub_resource type="RectangleShape2D" id="RectangleShape2D_ea3sw"]
++size = Vector2(402, 183)
++
++[node name="Crate" instance=ExtResource("1_7h6lm")]
++script = ExtResource("2_2qr73")
++
++[node name="Sprite2D" parent="." index="0"]
++texture = ExtResource("3_hb2sa")
++
++[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
++position = Vector2(-1, 16)
++texture = ExtResource("4_jvve1")
++
++[node name="CollisionShape2D" parent="." index="2"]
++position = Vector2(-1, 0.5)
++shape = SubResource("RectangleShape2D_ea3sw")
+diff --git a/scenes/container/item_container.gd b/scenes/container/item_container.gd
+new file mode 100644
+index 0000000..2779f02
+--- /dev/null
++++ b/scenes/container/item_container.gd
+@@ -0,0 +1,5 @@
++extends StaticBody2D
++class_name ItemContainer
++
++func hit():
++	print("object")
+diff --git a/scenes/container/item_container.tscn b/scenes/container/item_container.tscn
+new file mode 100644
+index 0000000..818aec8
+--- /dev/null
++++ b/scenes/container/item_container.tscn
+@@ -0,0 +1,10 @@
++[gd_scene load_steps=2 format=3 uid="uid://54f4a8j2s5dm"]
++
++[ext_resource type="Script" path="res://scenes/container/item_container.gd" id="1_lflou"]
++
++[node name="ItemContainer" type="StaticBody2D"]
++script = ExtResource("1_lflou")
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+diff --git a/scenes/container/toilet.gd b/scenes/container/toilet.gd
+new file mode 100644
+index 0000000..3287f7b
+--- /dev/null
++++ b/scenes/container/toilet.gd
+@@ -0,0 +1,4 @@
++extends ItemContainer
++
++func hit():
++	print("toilet")
+diff --git a/scenes/container/toilet.tscn b/scenes/container/toilet.tscn
+new file mode 100644
+index 0000000..588f6d4
+--- /dev/null
++++ b/scenes/container/toilet.tscn
+@@ -0,0 +1,20 @@
++[gd_scene load_steps=5 format=3 uid="uid://cek6j1x67dt38"]
++
++[ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_v1c0k"]
++[ext_resource type="Script" path="res://scenes/container/toilet.gd" id="2_dfwyg"]
++[ext_resource type="Texture2D" uid="uid://lg5qj6ow88db" path="res://graphics/objects/toilet.png" id="2_s2hsf"]
++
++[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lxxei"]
++radius = 96.0
++height = 246.0
++
++[node name="Toilet" instance=ExtResource("1_v1c0k")]
++script = ExtResource("2_dfwyg")
++
++[node name="Sprite2D" parent="." index="0"]
++position = Vector2(-2, 0)
++texture = ExtResource("2_s2hsf")
++
++[node name="CollisionShape2D" parent="." index="1"]
++position = Vector2(-2, -3)
++shape = SubResource("CapsuleShape2D_lxxei")
+diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
+new file mode 100644
+index 0000000..841e282
+--- /dev/null
++++ b/scenes/levels/inside.tscn
+@@ -0,0 +1,5 @@
++[gd_scene load_steps=2 format=3 uid="uid://c4n6f3okesapm"]
++
++[ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_nf3sw"]
++
++[node name="Inside" instance=ExtResource("1_nf3sw")]
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+index 78780de..a1eeba1 100644
+--- a/scenes/levels/level.gd
++++ b/scenes/levels/level.gd
+@@ -1,14 +1,10 @@
+ extends Node2D
++class_name LevelParent
+ 
+ var laser_scene: PackedScene = preload("res://scenes/projectiles/laser.tscn")
+ var grenade_scene: PackedScene = preload("res://scenes/projectiles/grenade.tscn")
+ 
+ 
+-func _on_gate_player_entered_gate(_body) -> void:
+-	var tween = create_tween()
+-	tween.tween_property($Player, "speed", 0, 0.8)
+-
+-
+ func _on_player_laser(pos, direction) -> void:
+ 	var laser = laser_scene.instantiate() as Area2D
+ 	laser.position = pos
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index 69c0cf2..cb24472 100644
+index cb24472..b17138c 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -1,4 +1,4 @@
--[gd_scene load_steps=17 format=3 uid="uid://qkshw585lie5"]
-+[gd_scene load_steps=18 format=3 uid="uid://qkshw585lie5"]
+@@ -1,123 +1,14 @@
+-[gd_scene load_steps=18 format=3 uid="uid://qkshw585lie5"]
++[gd_scene load_steps=3 format=3 uid="uid://qkshw585lie5"]
  
  [ext_resource type="Script" path="res://scenes/levels/level.gd" id="1_mfxla"]
- [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
-@@ -13,6 +13,7 @@
- [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_syr3k"]
- [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_yt2rt"]
- [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_nhp4p"]
-+[ext_resource type="PackedScene" uid="uid://bohviaeh3wewt" path="res://scenes/enemies/drone.tscn" id="14_0qero"]
+-[ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_olrab"]
+-[ext_resource type="Texture2D" uid="uid://c6glgkjx1xhcn" path="res://graphics/ground/stones.png" id="2_xha0y"]
+-[ext_resource type="Texture2D" uid="uid://ittt17ktq64u" path="res://graphics/decals/dirt_patch.png" id="3_nx5ss"]
+ [ext_resource type="PackedScene" uid="uid://rj3p5ydyve7d" path="res://scenes/player/player.tscn" id="4_5mwps"]
+-[ext_resource type="Texture2D" uid="uid://dxhqn26i13atq" path="res://graphics/decals/moss/moss_1.png" id="4_dfb8s"]
+-[ext_resource type="Texture2D" uid="uid://c7txa817ahj8p" path="res://graphics/decals/moss/moss_2.png" id="5_00jc3"]
+-[ext_resource type="Texture2D" uid="uid://db5jpxftlrafe" path="res://graphics/decals/moss/moss_4.png" id="7_hr48u"]
+-[ext_resource type="Texture2D" uid="uid://cguorh50mmy45" path="res://graphics/tilesets/outside_walls.png" id="8_2o386"]
+-[ext_resource type="Texture2D" uid="uid://cldx5ludqwvnr" path="res://graphics/tilesets/soil.png" id="9_rfc1d"]
+-[ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_syr3k"]
+-[ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_yt2rt"]
+-[ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_nhp4p"]
+-[ext_resource type="PackedScene" uid="uid://bohviaeh3wewt" path="res://scenes/enemies/drone.tscn" id="14_0qero"]
+-
+-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_er3v6"]
+-resource_name = "walls"
+-texture = ExtResource("8_2o386")
+-texture_region_size = Vector2i(390, 390)
+-0:0/0 = 0
+-1:0/0 = 0
+-2:0/0 = 0
+-0:1/0 = 0
+-1:1/0 = 0
+-2:1/0 = 0
+-0:2/0 = 0
+-1:2/0 = 0
+-2:2/0 = 0
+-0:3/0 = 0
+-
+-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_51uae"]
+-resource_name = "soil"
+-texture = ExtResource("9_rfc1d")
+-texture_region_size = Vector2i(390, 390)
+-0:0/0 = 0
+-1:0/0 = 0
+-2:0/0 = 0
+-0:1/0 = 0
+-1:1/0 = 0
+-2:1/0 = 0
+-0:2/0 = 0
+-1:2/0 = 0
+-2:2/0 = 0
+-
+-[sub_resource type="TileSet" id="TileSet_6wut3"]
+-tile_size = Vector2i(390, 390)
+-sources/0 = SubResource("TileSetAtlasSource_er3v6")
+-sources/1 = SubResource("TileSetAtlasSource_51uae")
  
- [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_er3v6"]
- resource_name = "walls"
-@@ -130,6 +131,9 @@ rotation_smoothing_enabled = true
- [node name="Projectiles" type="Node2D" parent="."]
+ [node name="Level" type="Node2D"]
+ script = ExtResource("1_mfxla")
+ 
+ [node name="Ground" type="Node2D" parent="."]
+ 
+-[node name="Soil" type="Sprite2D" parent="Ground"]
+-texture_repeat = 2
+-position = Vector2(560, 656.662)
+-scale = Vector2(1, 0.876997)
+-texture = ExtResource("2_xha0y")
+-region_enabled = true
+-region_rect = Rect2(-10759.5, -2325.54, 16000, 10000)
+-
+-[node name="Decoration" type="Sprite2D" parent="Ground"]
+-modulate = Color(0.615686, 0.913725, 0.905882, 0.552941)
+-position = Vector2(-780, 1161)
+-scale = Vector2(1, 0.980602)
+-texture = ExtResource("3_nx5ss")
+-
+-[node name="TileMap" type="TileMap" parent="Ground"]
+-tile_set = SubResource("TileSet_6wut3")
+-format = 2
+-layer_0/name = "Soil"
+-layer_0/tile_data = PackedInt32Array(-3, 65537, 2, -4, 65537, 2, -5, 65537, 2, -6, 65537, 2, -7, 65537, 2, -8, 65537, 2, -9, 1, 2, -65545, 1, 1, -65544, 65537, 1, -65543, 65537, 1, -65542, 65537, 1, -65541, 65537, 1, -65540, 65537, 1, -65539, 65537, 1, -131075, 65537, 1, -131076, 65537, 1, -131077, 65537, 1, -131078, 65537, 1, -131079, 65537, 1, -131080, 65537, 1, -131081, 1, 1, -262138, 1, 1, -196602, 1, 1, -131066, 1, 1, -65530, 1, 2, -65529, 65537, 2, -65528, 65537, 2, -65527, 65537, 2, -65526, 65537, 2, -65525, 65537, 1, 11, 1, 1, 65547, 1, 1, 131083, 1, 1, 196619, 1, 1, 262155, 1, 1, 327691, 1, 1, 393227, 1, 2, 393228, 65537, 2, 393229, 65537, 2, 393230, 65537, 2, 393231, 65537, 2, 393232, 65537, 2, 393233, 65537, 2, 393234, 65537, 2, 393235, 65537, 2, 393236, 65537, 2, 327700, 65537, 1, 262164, 65537, 1, 196628, 65537, 1, 131092, 65537, 1, 65556, 65537, 1, 20, 65537, 1, -65516, 65537, 1, -131052, 65537, 1, -196588, 65537, 1, -262124, 65537, 1, -262125, 65537, 1, -262126, 65537, 1, -262127, 65537, 1, -262128, 65537, 1, -262129, 65537, 1, -262130, 65537, 1, -262131, 65537, 1, -262132, 65537, 1, -262133, 65537, 1, -262134, 65537, 1, -262135, 65537, 1, -262136, 65537, 1, -262137, 65537, 1, 15, 65537, 1, -65521, 65537, 1, -131057, 65537, 1, -196593, 65537, 1, -196594, 65537, 1, -196595, 65537, 1, -196596, 65537, 1, -196597, 65537, 1, -196598, 65537, 1, -196599, 65537, 1, -196600, 65537, 1, -196601, 65537, 1, -131065, 65537, 1, -131064, 65537, 1, -131063, 65537, 1, -131062, 65537, 1, -131061, 65537, 1, -131060, 65537, 1, -65524, 65537, 1, 12, 65537, 1, 65548, 65537, 1, 131084, 65537, 1, 196620, 65537, 1, 262156, 65537, 1, 327692, 65537, 1, 327693, 65537, 1, 262157, 65537, 1, 196621, 65537, 1, 131085, 65537, 1, 65549, 65537, 1, 13, 65537, 1, -65523, 65537, 1, -131059, 65537, 1, -131058, 65537, 1, -65522, 65537, 1, 14, 65537, 1, 65550, 65537, 1, 131086, 65537, 1, 196622, 65537, 1, 262158, 65537, 1, 327694, 65537, 1, 327695, 65537, 1, 262159, 65537, 1, 196623, 65537, 1, 131087, 65537, 1, 65551, 65537, 1, 65552, 65537, 1, 16, 65537, 1, -65520, 65537, 1, -131056, 65537, 1, -196592, 65537, 1, -196591, 65537, 1, -131055, 65537, 1, -65519, 65537, 1, 17, 65537, 1, 65553, 65537, 1, 131089, 65537, 1, 131088, 65537, 1, 196624, 65537, 1, 262160, 65537, 1, 327696, 65537, 1, 327697, 65537, 1, 262161, 65537, 1, 196625, 65537, 1, 196626, 65537, 1, 131090, 65537, 1, 65554, 65537, 1, 18, 65537, 1, -65518, 65537, 1, -131054, 65537, 1, -196590, 65537, 1, -196589, 65537, 1, -131053, 65537, 1, -65517, 65537, 1, 19, 65537, 1, 65555, 65537, 1, 131091, 65537, 1, 196627, 65537, 1, 262163, 65537, 1, 262162, 65537, 1, 327698, 65537, 1, 327699, 65537, 1)
+-layer_1/name = "Walls"
+-layer_1/tile_data = PackedInt32Array(-4, 131072, 0, -5, 65536, 0, -6, 65536, 0, -7, 65536, 0, -8, 65536, 0, -9, 0, 0, -65530, 65536, 2, -65529, 65536, 0, -65528, 65536, 0, -65527, 65536, 0, -65526, 65536, 0, -65525, 131072, 1, 11, 0, 2, 65547, 0, 2, 131083, 0, 2, 196619, 0, 2, 262155, 0, 3, -131066, 0, 2, -196602, 0, 2, -262138, 0, 1)
+-
+-[node name="Moss4" type="Sprite2D" parent="Ground"]
+-position = Vector2(2907, -31)
+-texture = ExtResource("7_hr48u")
+-
+-[node name="Moss5" type="Sprite2D" parent="Ground"]
+-position = Vector2(3844, -31)
+-texture = ExtResource("7_hr48u")
+-
+-[node name="Moss7" type="Sprite2D" parent="Ground"]
+-position = Vector2(4295, 672)
+-rotation = 1.57032
+-texture = ExtResource("7_hr48u")
+-
+-[node name="Moss8" type="Sprite2D" parent="Ground"]
+-position = Vector2(4304, 1475)
+-rotation = -1.63639
+-texture = ExtResource("7_hr48u")
+-
+-[node name="Moss2" type="Sprite2D" parent="Ground"]
+-position = Vector2(4283, -20)
+-texture = ExtResource("5_00jc3")
+-
+-[node name="Moss6" type="Sprite2D" parent="Ground"]
+-position = Vector2(3543, -42.0001)
+-rotation = -1.13123
+-texture = ExtResource("5_00jc3")
+-
+-[node name="Moss1" type="Sprite2D" parent="Ground"]
+-position = Vector2(4212, 145)
+-texture = ExtResource("4_dfb8s")
+-
+-[node name="House" parent="Ground" instance=ExtResource("9_syr3k")]
+-position = Vector2(-2212, 3691)
+-rotation = -2.18166
+-
+-[node name="SteamVent" parent="Ground" instance=ExtResource("10_yt2rt")]
+-position = Vector2(-98, 492)
+-
+-[node name="LightFanAnimation" parent="Ground" instance=ExtResource("11_nhp4p")]
+-position = Vector2(-2259, 1430)
+-
+-[node name="Gate" parent="." instance=ExtResource("2_olrab")]
++[node name="Projectiles" type="Node2D" parent="."]
  metadata/_edit_lock_ = true
  
-+[node name="Drone" parent="." instance=ExtResource("14_0qero")]
-+position = Vector2(286, 970)
-+
- [connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]
- [connection signal="player_exited" from="Ground/House" to="." method="_on_house_player_exited"]
- [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
-diff --git a/scenes/projectiles/laser.gd b/scenes/projectiles/laser.gd
-index 4131434..94fa99e 100644
---- a/scenes/projectiles/laser.gd
-+++ b/scenes/projectiles/laser.gd
-@@ -3,5 +3,18 @@ extends Area2D
- @export var speed: int = 1000
- var direction: Vector2 = Vector2.UP
+ [node name="Player" parent="." instance=ExtResource("4_5mwps")]
+@@ -128,14 +19,5 @@ zoom = Vector2(0.5, 0.5)
+ position_smoothing_enabled = true
+ rotation_smoothing_enabled = true
  
-+func _ready() -> void:
-+	$SelfDestructTimer.start()
+-[node name="Projectiles" type="Node2D" parent="."]
+-metadata/_edit_lock_ = true
+-
+-[node name="Drone" parent="." instance=ExtResource("14_0qero")]
+-position = Vector2(286, 970)
+-
+-[connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]
+-[connection signal="player_exited" from="Ground/House" to="." method="_on_house_player_exited"]
+-[connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
+ [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
+ [connection signal="laser" from="Player" to="." method="_on_player_laser"]
+diff --git a/scenes/levels/outside.gd b/scenes/levels/outside.gd
+new file mode 100644
+index 0000000..3d12e1a
+--- /dev/null
++++ b/scenes/levels/outside.gd
+@@ -0,0 +1,6 @@
++extends LevelParent
 +
- func _process(delta: float) -> void:
- 	position += direction * speed * delta
 +
++func _on_gate_player_entered_gate(_body: Variant) -> void:
++	var tween = create_tween()
++	tween.tween_property($Player, "speed", 0, 0.8)
+diff --git a/scenes/levels/outside.tscn b/scenes/levels/outside.tscn
+new file mode 100644
+index 0000000..350a283
+--- /dev/null
++++ b/scenes/levels/outside.tscn
+@@ -0,0 +1,131 @@
++[gd_scene load_steps=19 format=3 uid="uid://bgleerevfpbtf"]
 +
-+func _on_body_entered(body: Node2D) -> void:
-+	if "hit" in body:
-+		body.hit()
-+	queue_free()
++[ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_0tbmh"]
++[ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_car28"]
++[ext_resource type="Script" path="res://scenes/levels/outside.gd" id="2_spfgs"]
++[ext_resource type="Texture2D" uid="uid://c6glgkjx1xhcn" path="res://graphics/ground/stones.png" id="2_x1q87"]
++[ext_resource type="Texture2D" uid="uid://ittt17ktq64u" path="res://graphics/decals/dirt_patch.png" id="3_ax5ce"]
++[ext_resource type="Texture2D" uid="uid://cguorh50mmy45" path="res://graphics/tilesets/outside_walls.png" id="4_cs0nu"]
++[ext_resource type="Texture2D" uid="uid://cldx5ludqwvnr" path="res://graphics/tilesets/soil.png" id="5_53kpx"]
++[ext_resource type="Texture2D" uid="uid://db5jpxftlrafe" path="res://graphics/decals/moss/moss_4.png" id="6_a1swp"]
++[ext_resource type="Texture2D" uid="uid://c7txa817ahj8p" path="res://graphics/decals/moss/moss_2.png" id="7_6g0qq"]
++[ext_resource type="Texture2D" uid="uid://dxhqn26i13atq" path="res://graphics/decals/moss/moss_1.png" id="8_5f8rf"]
++[ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_6lamu"]
++[ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_6vblr"]
++[ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_l6q37"]
++[ext_resource type="PackedScene" uid="uid://cek6j1x67dt38" path="res://scenes/container/toilet.tscn" id="14_1ewk5"]
++[ext_resource type="PackedScene" uid="uid://bvmitrxjt7t43" path="res://scenes/container/crate.tscn" id="15_4ccok"]
 +
++[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wux4t"]
++resource_name = "walls"
++texture = ExtResource("4_cs0nu")
++texture_region_size = Vector2i(390, 390)
++0:0/0 = 0
++1:0/0 = 0
++2:0/0 = 0
++0:1/0 = 0
++1:1/0 = 0
++2:1/0 = 0
++0:2/0 = 0
++1:2/0 = 0
++2:2/0 = 0
++0:3/0 = 0
 +
-+func _on_timer_timeout() -> void:
-+	queue_free()
-diff --git a/scenes/projectiles/laser.tscn b/scenes/projectiles/laser.tscn
-index 0d790cc..57c442d 100644
---- a/scenes/projectiles/laser.tscn
-+++ b/scenes/projectiles/laser.tscn
-@@ -14,8 +14,15 @@ script = ExtResource("1_dmjkk")
- speed = 2000
- 
- [node name="Sprite2D" type="Sprite2D" parent="."]
--position = Vector2(-1, 37)
-+position = Vector2(-1, 38)
- texture = ExtResource("1_6fgxe")
- 
- [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
- shape = SubResource("CapsuleShape2D_khuws")
++[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_epkem"]
++resource_name = "soil"
++texture = ExtResource("5_53kpx")
++texture_region_size = Vector2i(390, 390)
++0:0/0 = 0
++1:0/0 = 0
++2:0/0 = 0
++0:1/0 = 0
++1:1/0 = 0
++2:1/0 = 0
++0:2/0 = 0
++1:2/0 = 0
++2:2/0 = 0
 +
-+[node name="SelfDestructTimer" type="Timer" parent="."]
-+wait_time = 2.0
-+one_shot = true
++[sub_resource type="TileSet" id="TileSet_e1u7i"]
++tile_size = Vector2i(390, 390)
++sources/0 = SubResource("TileSetAtlasSource_wux4t")
++sources/1 = SubResource("TileSetAtlasSource_epkem")
 +
-+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
-+[connection signal="timeout" from="SelfDestructTimer" to="." method="_on_timer_timeout"]
++[node name="Outside" instance=ExtResource("1_0tbmh")]
++script = ExtResource("2_spfgs")
++
++[node name="Soil" type="Sprite2D" parent="Ground" index="0"]
++texture_repeat = 2
++position = Vector2(-23, 600)
++scale = Vector2(1, 0.876997)
++texture = ExtResource("2_x1q87")
++region_enabled = true
++region_rect = Rect2(-10759.5, -2325.54, 16000, 10000)
++
++[node name="Decoration" type="Sprite2D" parent="Ground" index="1"]
++modulate = Color(0.615686, 0.913725, 0.905882, 0.552941)
++position = Vector2(-780, 1161)
++scale = Vector2(1, 0.980602)
++texture = ExtResource("3_ax5ce")
++
++[node name="TileMap" type="TileMap" parent="Ground" index="2"]
++tile_set = SubResource("TileSet_e1u7i")
++format = 2
++layer_0/name = "Soil"
++layer_0/tile_data = PackedInt32Array(-3, 65537, 2, -4, 65537, 2, -5, 65537, 2, -6, 65537, 2, -7, 65537, 2, -8, 65537, 2, -9, 1, 2, -65545, 1, 1, -65544, 65537, 1, -65543, 65537, 1, -65542, 65537, 1, -65541, 65537, 1, -65540, 65537, 1, -65539, 65537, 1, -131075, 65537, 1, -131076, 65537, 1, -131077, 65537, 1, -131078, 65537, 1, -131079, 65537, 1, -131080, 65537, 1, -131081, 1, 1, -262138, 1, 1, -196602, 1, 1, -131066, 1, 1, -65530, 1, 2, -65529, 65537, 2, -65528, 65537, 2, -65527, 65537, 2, -65526, 65537, 2, -65525, 65537, 1, 11, 1, 1, 65547, 1, 1, 131083, 1, 1, 196619, 1, 1, 262155, 1, 1, 327691, 1, 1, 393227, 1, 2, 393228, 65537, 2, 393229, 65537, 2, 393230, 65537, 2, 393231, 65537, 2, 393232, 65537, 2, 393233, 65537, 2, 393234, 65537, 2, 393235, 65537, 2, 393236, 65537, 2, 327700, 65537, 1, 262164, 65537, 1, 196628, 65537, 1, 131092, 65537, 1, 65556, 65537, 1, 20, 65537, 1, -65516, 65537, 1, -131052, 65537, 1, -196588, 65537, 1, -262124, 65537, 1, -262125, 65537, 1, -262126, 65537, 1, -262127, 65537, 1, -262128, 65537, 1, -262129, 65537, 1, -262130, 65537, 1, -262131, 65537, 1, -262132, 65537, 1, -262133, 65537, 1, -262134, 65537, 1, -262135, 65537, 1, -262136, 65537, 1, -262137, 65537, 1, 15, 65537, 1, -65521, 65537, 1, -131057, 65537, 1, -196593, 65537, 1, -196594, 65537, 1, -196595, 65537, 1, -196596, 65537, 1, -196597, 65537, 1, -196598, 65537, 1, -196599, 65537, 1, -196600, 65537, 1, -196601, 65537, 1, -131065, 65537, 1, -131064, 65537, 1, -131063, 65537, 1, -131062, 65537, 1, -131061, 65537, 1, -131060, 65537, 1, -65524, 65537, 1, 12, 65537, 1, 65548, 65537, 1, 131084, 65537, 1, 196620, 65537, 1, 262156, 65537, 1, 327692, 65537, 1, 327693, 65537, 1, 262157, 65537, 1, 196621, 65537, 1, 131085, 65537, 1, 65549, 65537, 1, 13, 65537, 1, -65523, 65537, 1, -131059, 65537, 1, -131058, 65537, 1, -65522, 65537, 1, 14, 65537, 1, 65550, 65537, 1, 131086, 65537, 1, 196622, 65537, 1, 262158, 65537, 1, 327694, 65537, 1, 327695, 65537, 1, 262159, 65537, 1, 196623, 65537, 1, 131087, 65537, 1, 65551, 65537, 1, 65552, 65537, 1, 16, 65537, 1, -65520, 65537, 1, -131056, 65537, 1, -196592, 65537, 1, -196591, 65537, 1, -131055, 65537, 1, -65519, 65537, 1, 17, 65537, 1, 65553, 65537, 1, 131089, 65537, 1, 131088, 65537, 1, 196624, 65537, 1, 262160, 65537, 1, 327696, 65537, 1, 327697, 65537, 1, 262161, 65537, 1, 196625, 65537, 1, 196626, 65537, 1, 131090, 65537, 1, 65554, 65537, 1, 18, 65537, 1, -65518, 65537, 1, -131054, 65537, 1, -196590, 65537, 1, -196589, 65537, 1, -131053, 65537, 1, -65517, 65537, 1, 19, 65537, 1, 65555, 65537, 1, 131091, 65537, 1, 196627, 65537, 1, 262163, 65537, 1, 262162, 65537, 1, 327698, 65537, 1, 327699, 65537, 1)
++layer_1/name = "Walls"
++layer_1/tile_data = PackedInt32Array(-4, 131072, 0, -5, 65536, 0, -6, 65536, 0, -7, 65536, 0, -8, 65536, 0, -9, 0, 0, -65530, 65536, 2, -65529, 65536, 0, -65528, 65536, 0, -65527, 65536, 0, -65526, 65536, 0, -65525, 131072, 1, 11, 0, 2, 65547, 0, 2, 131083, 0, 2, 196619, 0, 2, 262155, 0, 3, -131066, 0, 2, -196602, 0, 2, -262138, 0, 1)
++
++[node name="Moss4" type="Sprite2D" parent="Ground" index="3"]
++position = Vector2(2907, -31)
++texture = ExtResource("6_a1swp")
++
++[node name="Moss5" type="Sprite2D" parent="Ground" index="4"]
++position = Vector2(3844, -31)
++texture = ExtResource("6_a1swp")
++
++[node name="Moss7" type="Sprite2D" parent="Ground" index="5"]
++position = Vector2(4295, 672)
++rotation = 1.57032
++texture = ExtResource("6_a1swp")
++
++[node name="Moss8" type="Sprite2D" parent="Ground" index="6"]
++position = Vector2(4304, 1475)
++rotation = -1.63639
++texture = ExtResource("6_a1swp")
++
++[node name="Moss2" type="Sprite2D" parent="Ground" index="7"]
++position = Vector2(4283, -20)
++texture = ExtResource("7_6g0qq")
++
++[node name="Moss6" type="Sprite2D" parent="Ground" index="8"]
++position = Vector2(3543, -42.0001)
++rotation = -1.13123
++texture = ExtResource("7_6g0qq")
++
++[node name="Moss1" type="Sprite2D" parent="Ground" index="9"]
++position = Vector2(4212, 145)
++texture = ExtResource("8_5f8rf")
++
++[node name="House" parent="Ground" index="10" instance=ExtResource("9_6lamu")]
++position = Vector2(-2212, 3691)
++rotation = -2.18166
++
++[node name="SteamVent" parent="Ground" index="11" instance=ExtResource("10_6vblr")]
++position = Vector2(-98, 492)
++
++[node name="LightFanAnimation" parent="Ground" index="12" instance=ExtResource("11_l6q37")]
++position = Vector2(-2259, 1430)
++
++[node name="Gate" parent="." index="1" instance=ExtResource("2_car28")]
++position = Vector2(243, -266)
++
++[node name="Toilet" parent="." index="2" instance=ExtResource("14_1ewk5")]
++position = Vector2(798, 845)
++
++[node name="Crate" parent="." index="3" instance=ExtResource("15_4ccok")]
++position = Vector2(1319, 607)
++
++[node name="Player" parent="." index="5"]
++position = Vector2(532, 566)
++
++[connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
