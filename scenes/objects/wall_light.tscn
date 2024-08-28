@@ -7,7 +7,6 @@
 polygon = PackedVector2Array(206.667, 43.3333, 206.667, 11.6667, 206.667, -10, 206.667, -16.6667, 216.667, -10, 220, -3.33333, 220, 30, 216.667, 36.6667)
 
 [node name="WallLight" type="StaticBody2D"]
-scale = Vector2(0.3, 0.3)
 collision_layer = 4
 collision_mask = 11
 
