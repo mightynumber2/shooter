@@ -1,115 +1,300 @@
-diff --git a/globals/globals.gd b/globals/globals.gd
-index 1e5d43b..6c4e1a6 100644
---- a/globals/globals.gd
-+++ b/globals/globals.gd
-@@ -1,4 +1,16 @@
- extends Node
+diff --git a/project.godot b/project.godot
+index 3ce6d02..a7b119a 100644
+--- a/project.godot
++++ b/project.godot
+@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
+ Globals="*res://globals/globals.gd"
+ TransitionLayer="*res://globals/transition_layer.tscn"
  
--var laser_amount: int = 20
--var grenade_amount: int = 5
-+signal stat_change
++[global_group]
 +
-+var laser_amount: int = 20:
-+	set(value):
-+		laser_amount = value
-+		stat_change.emit()
-+var grenade_amount: int = 5:
-+	set(value):
-+		grenade_amount = value
-+		stat_change.emit()
-+var health = 60:
-+	set(value):
-+		health = value
-+		stat_change.emit()
++Container=""
++
+ [input]
+ 
+ left={
+diff --git a/scenes/container/crate.gd b/scenes/container/crate.gd
+index 038db46..31689ea 100644
+--- a/scenes/container/crate.gd
++++ b/scenes/container/crate.gd
+@@ -1,4 +1,9 @@
+ extends ItemContainer
+ 
+ func hit():
+-	print("crate")
++	if not opened:
++		$LidSprite.hide()
++		for i in range(5):
++			var pos = $SpawnPositions.get_child(randi()%$SpawnPositions.get_child_count()).global_position
++			open.emit(pos, current_direction)
++	opened = true
+diff --git a/scenes/container/crate.tscn b/scenes/container/crate.tscn
+index 1b0e265..654bbb0 100644
+--- a/scenes/container/crate.tscn
++++ b/scenes/container/crate.tscn
+@@ -11,13 +11,67 @@ size = Vector2(402, 183)
+ [node name="Crate" instance=ExtResource("1_7h6lm")]
+ script = ExtResource("2_2qr73")
+ 
+-[node name="Sprite2D" parent="." index="0"]
++[node name="BaseSprite" parent="." index="0"]
+ texture = ExtResource("3_hb2sa")
+ 
+-[node name="Sprite2D2" type="Sprite2D" parent="." index="1"]
+-position = Vector2(-1, 16)
++[node name="LidSprite" parent="." index="1"]
++position = Vector2(0, 8)
+ texture = ExtResource("4_jvve1")
+ 
+ [node name="CollisionShape2D" parent="." index="2"]
+ position = Vector2(-1, 0.5)
+ shape = SubResource("RectangleShape2D_ea3sw")
++
++[node name="Marker2D" type="Marker2D" parent="SpawnPositions" index="0"]
++position = Vector2(-156, 17)
++
++[node name="Marker2D2" type="Marker2D" parent="SpawnPositions" index="1"]
++position = Vector2(-156, -47)
++
++[node name="Marker2D3" type="Marker2D" parent="SpawnPositions" index="2"]
++position = Vector2(-110, -23)
++
++[node name="Marker2D4" type="Marker2D" parent="SpawnPositions" index="3"]
++position = Vector2(-69, -51)
++
++[node name="Marker2D5" type="Marker2D" parent="SpawnPositions" index="4"]
++position = Vector2(-62, -7)
++
++[node name="Marker2D6" type="Marker2D" parent="SpawnPositions" index="5"]
++position = Vector2(-86, 31)
++
++[node name="Marker2D7" type="Marker2D" parent="SpawnPositions" index="6"]
++position = Vector2(-8, 31)
++
++[node name="Marker2D8" type="Marker2D" parent="SpawnPositions" index="7"]
++position = Vector2(-11, -13)
++
++[node name="Marker2D9" type="Marker2D" parent="SpawnPositions" index="8"]
++position = Vector2(11, -50)
++
++[node name="Marker2D10" type="Marker2D" parent="SpawnPositions" index="9"]
++position = Vector2(38, -2)
++
++[node name="Marker2D11" type="Marker2D" parent="SpawnPositions" index="10"]
++position = Vector2(65, -43)
++
++[node name="Marker2D12" type="Marker2D" parent="SpawnPositions" index="11"]
++position = Vector2(49, 30)
++
++[node name="Marker2D13" type="Marker2D" parent="SpawnPositions" index="12"]
++position = Vector2(95, -20)
++
++[node name="Marker2D14" type="Marker2D" parent="SpawnPositions" index="13"]
++position = Vector2(96, 25)
++
++[node name="Marker2D15" type="Marker2D" parent="SpawnPositions" index="14"]
++position = Vector2(139, -45)
++
++[node name="Marker2D16" type="Marker2D" parent="SpawnPositions" index="15"]
++position = Vector2(135, 8)
++
++[node name="Marker2D17" type="Marker2D" parent="SpawnPositions" index="16"]
++position = Vector2(163, -20)
++
++[node name="Marker2D18" type="Marker2D" parent="SpawnPositions" index="17"]
++position = Vector2(163, 31)
+diff --git a/scenes/container/item_container.gd b/scenes/container/item_container.gd
+index 2779f02..783a94b 100644
+--- a/scenes/container/item_container.gd
++++ b/scenes/container/item_container.gd
+@@ -1,5 +1,10 @@
+ extends StaticBody2D
+ class_name ItemContainer
+ 
+-func hit():
+-	print("object")
++@onready var current_direction = Vector2.DOWN.rotated(rotation)
++var opened: bool = false
++signal open(pos, direction)
++
++# dummy func
++func _ready() -> void:
++	open.emit()
+diff --git a/scenes/container/item_container.tscn b/scenes/container/item_container.tscn
+index 1cc8f77..986e30d 100644
+--- a/scenes/container/item_container.tscn
++++ b/scenes/container/item_container.tscn
+@@ -2,11 +2,15 @@
+ 
+ [ext_resource type="Script" path="res://scenes/container/item_container.gd" id="1_lflou"]
+ 
+-[node name="ItemContainer" type="StaticBody2D"]
++[node name="ItemContainer" type="StaticBody2D" groups=["Container"]]
+ collision_layer = 4
+ collision_mask = 11
+ script = ExtResource("1_lflou")
+ 
+-[node name="Sprite2D" type="Sprite2D" parent="."]
++[node name="BaseSprite" type="Sprite2D" parent="."]
++
++[node name="LidSprite" type="Sprite2D" parent="."]
+ 
+ [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++
++[node name="SpawnPositions" type="Node2D" parent="."]
+diff --git a/scenes/container/toilet.gd b/scenes/container/toilet.gd
+index 3287f7b..ac4b760 100644
+--- a/scenes/container/toilet.gd
++++ b/scenes/container/toilet.gd
+@@ -1,4 +1,8 @@
+ extends ItemContainer
+ 
+ func hit():
+-	print("toilet")
++	if not opened:
++		$LidSprite.hide()
++		var pos = $SpawnPositions/Marker2D.global_position
++		open.emit(pos, current_direction)
++	opened = true
+diff --git a/scenes/container/toilet.tscn b/scenes/container/toilet.tscn
+index 588f6d4..0b081dd 100644
+--- a/scenes/container/toilet.tscn
++++ b/scenes/container/toilet.tscn
+@@ -1,8 +1,9 @@
+-[gd_scene load_steps=5 format=3 uid="uid://cek6j1x67dt38"]
++[gd_scene load_steps=6 format=3 uid="uid://cek6j1x67dt38"]
+ 
+ [ext_resource type="PackedScene" uid="uid://54f4a8j2s5dm" path="res://scenes/container/item_container.tscn" id="1_v1c0k"]
+ [ext_resource type="Script" path="res://scenes/container/toilet.gd" id="2_dfwyg"]
+ [ext_resource type="Texture2D" uid="uid://lg5qj6ow88db" path="res://graphics/objects/toilet.png" id="2_s2hsf"]
++[ext_resource type="Texture2D" uid="uid://08p2bl6sdwp4" path="res://graphics/objects/lid.png" id="4_rm8fu"]
+ 
+ [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lxxei"]
+ radius = 96.0
+@@ -11,10 +12,15 @@ height = 246.0
+ [node name="Toilet" instance=ExtResource("1_v1c0k")]
+ script = ExtResource("2_dfwyg")
+ 
+-[node name="Sprite2D" parent="." index="0"]
+-position = Vector2(-2, 0)
++[node name="BaseSprite" parent="." index="0"]
+ texture = ExtResource("2_s2hsf")
+ 
+-[node name="CollisionShape2D" parent="." index="1"]
++[node name="LidSprite" parent="." index="1"]
++position = Vector2(0, 26)
++texture = ExtResource("4_rm8fu")
++
++[node name="CollisionShape2D" parent="." index="2"]
+ position = Vector2(-2, -3)
+ shape = SubResource("CapsuleShape2D_lxxei")
++
++[node name="Marker2D" type="Marker2D" parent="SpawnPositions" index="0"]
 diff --git a/scenes/items/item.gd b/scenes/items/item.gd
-index 51dbc42..aed1c5c 100644
+index aed1c5c..a18d806 100644
 --- a/scenes/items/item.gd
 +++ b/scenes/items/item.gd
-@@ -3,7 +3,7 @@ extends Area2D
+@@ -3,6 +3,9 @@ extends Area2D
  var rotation_speed: int = 4
  var available_options = ["laser", "laser", "laser", "laser", "grenade", "health"]
  var type = available_options.pick_random()
--
-+	
++
++var direction: Vector2
++var distance: int = randi_range(150, 200)
+ 	
  func _ready() -> void:
  	if type == "laser":
- 		$Sprite2D.modulate = Color(0.1, 0.2, 0.8)
-@@ -16,6 +16,11 @@ func _process(delta: float) -> void:
+@@ -10,7 +13,15 @@ func _ready() -> void:
+ 	if type == "grenade":
+ 		$Sprite2D.modulate = Color(0.8, 0.2, 0.1)
+ 	if type == "health":
+-		$Sprite2D.modulate = Color(0.1, 0.8, 0.2)	
++		$Sprite2D.modulate = Color(0.1, 0.8, 0.2)
++		
++# alt tween item out solution
++func tween_movement():
++	var target_pos = position + direction * distance
++	var tween = create_tween()
++	tween.set_parallel(true)
++	tween.tween_property(self, "position", target_pos, 0.5)
++	tween.tween_property(self, "scale", Vector2(1, 1), 0.3).from(Vector2(0, 0))
+ 	
+ func _process(delta: float) -> void:
  	rotation += rotation_speed * delta
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+index a412ee7..6cd96c0 100644
+--- a/scenes/levels/level.gd
++++ b/scenes/levels/level.gd
+@@ -3,7 +3,18 @@ class_name LevelParent
  
+ var laser_scene: PackedScene = preload("res://scenes/projectiles/laser.tscn")
+ var grenade_scene: PackedScene = preload("res://scenes/projectiles/grenade.tscn")
+-
++var item_scene: PackedScene = preload("res://scenes/items/item.tscn")
++
++func _ready() -> void:
++	for container in get_tree().get_nodes_in_group("Container"):
++		container.connect("open", _on_container_opened)
++		
++func _on_container_opened(pos, direction):
++	var item = item_scene.instantiate()
++	item.position = pos
++	item.direction = direction
++	item.tween_movement()
++	$Items.call_deferred("add_child", item)
  
--func _on_body_entered(body: Node2D) -> void:
--	body.add_item(type)
-+func _on_body_entered(_body: Node2D) -> void:
-+	if type == "health":
-+		Globals.health += 10
-+	if type == "laser":
-+		Globals.laser_amount += 5
-+	if type == "grenade":
-+		Globals.grenade_amount += 1
- 	queue_free()
+ func _on_player_laser(pos, direction) -> void:
+ 	var laser = laser_scene.instantiate() as Area2D
 diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
-index 7b89cdd..91a060a 100644
+index 91a060a..bb069a5 100644
 --- a/scenes/levels/level.tscn
 +++ b/scenes/levels/level.tscn
-@@ -26,4 +26,3 @@ rotation_smoothing_enabled = true
+@@ -9,6 +9,8 @@ script = ExtResource("1_mfxla")
  
- [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
- [connection signal="laser" from="Player" to="." method="_on_player_laser"]
--[connection signal="update_stats" from="Player" to="." method="_on_player_update_stats"]
-diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 1a93b5b..798eb4c 100644
---- a/scenes/player/player.gd
-+++ b/scenes/player/player.gd
-@@ -2,7 +2,6 @@ extends CharacterBody2D
+ [node name="Ground" type="Node2D" parent="."]
  
- signal laser(pos, direction)
- signal grenade(pos, direction)
--signal update_stats
- 
- var can_laser: bool = true
- var can_grenade: bool = true
-@@ -45,9 +44,3 @@ func _on_laser_reload_timer_timeout() -> void:
- func _on_grenade_reload_timer_timeout() -> void:
- 	can_grenade = true
- 	
--func add_item(type: String) -> void:
--	if type == "laser":
--		Globals.laser_amount += 5
--	if type == "grenade":
--		Globals.grenade_amount += 1
--	update_stats.emit()
-diff --git a/scenes/user interface/ui.gd b/scenes/user interface/ui.gd
-index 7d3ebe2..aa55246 100644
---- a/scenes/user interface/ui.gd	
-+++ b/scenes/user interface/ui.gd	
-@@ -7,10 +7,14 @@ var red: Color = Color(0.9, 0, 0, 1)
- @onready var grenade_label: Label = $GrenadeCounter/VBoxContainer/Label
- @onready var laser_icon: TextureRect = $LaserCounter/VBoxContainer/TextureRect
- @onready var grenade_icon: TextureRect = $GrenadeCounter/VBoxContainer/TextureRect
-+@onready var health_bar: TextureProgressBar = $MarginContainer/TextureProgressBar
- 
- func _ready() -> void:
-+	Globals.connect("stat_change", update_stat_text)
- 	update_laser_text()
- 	update_grenade_text()
-+	update_health_text()
++[node name="Items" type="Node2D" parent="."]
 +
+ [node name="Projectiles" type="Node2D" parent="."]
+ metadata/_edit_lock_ = true
  
- func update_laser_text():
- 	laser_label.text = str(Globals.laser_amount)
-@@ -20,6 +24,14 @@ func update_grenade_text():
- 	grenade_label.text = str(Globals.grenade_amount)
- 	update_color(Globals.grenade_amount, grenade_label, grenade_icon)
- 	
-+func update_health_text():
-+	health_bar.value = Globals.health
-+	
-+func update_stat_text():
-+	update_laser_text()
-+	update_grenade_text()
-+	update_health_text()
-+	
- func update_color(amount: int, label: Label, icon: TextureRect) -> void:
- 	if amount > 0:
- 		label.modulate = green
+diff --git a/scenes/levels/outside.tscn b/scenes/levels/outside.tscn
+index 67ee190..636da88 100644
+--- a/scenes/levels/outside.tscn
++++ b/scenes/levels/outside.tscn
+@@ -1,4 +1,4 @@
+-[gd_scene load_steps=18 format=3 uid="uid://bgleerevfpbtf"]
++[gd_scene load_steps=20 format=3 uid="uid://bgleerevfpbtf"]
+ 
+ [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_0tbmh"]
+ [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_car28"]
+@@ -14,6 +14,8 @@
+ [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_6vblr"]
+ [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_l6q37"]
+ [ext_resource type="PackedScene" uid="uid://bbkq2ak5jj6jf" path="res://scenes/items/item.tscn" id="14_pi534"]
++[ext_resource type="PackedScene" uid="uid://bvmitrxjt7t43" path="res://scenes/container/crate.tscn" id="15_10xsy"]
++[ext_resource type="PackedScene" uid="uid://cek6j1x67dt38" path="res://scenes/container/toilet.tscn" id="16_0qsp0"]
+ 
+ [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wux4t"]
+ resource_name = "walls"
+@@ -118,10 +120,18 @@ position = Vector2(-2259, 1430)
+ [node name="Gate" parent="." index="1" instance=ExtResource("2_car28")]
+ position = Vector2(243, -266)
+ 
+-[node name="Player" parent="." index="3"]
++[node name="Crate" parent="." index="2" instance=ExtResource("15_10xsy")]
++position = Vector2(1004, 729)
++rotation = -1.5708
++
++[node name="Toilet" parent="." index="3" instance=ExtResource("16_0qsp0")]
++position = Vector2(1396, 461)
++rotation = 3.14159
++
++[node name="Player" parent="." index="6"]
+ position = Vector2(827, 277)
+ 
+-[node name="Item" parent="." index="6" instance=ExtResource("14_pi534")]
++[node name="Item" parent="." index="8" instance=ExtResource("14_pi534")]
+ position = Vector2(227, 616)
+ 
+ [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]

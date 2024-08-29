@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 Globals="*res://globals/globals.gd"
 TransitionLayer="*res://globals/transition_layer.tscn"
 
+[global_group]
+
+Container=""
+
 [input]
 
 left={
