@@ -1,37 +1,143 @@
-diff --git a/scenes/user interface/ui.gd b/scenes/user interface/ui.gd
-index d7a9b9e..7d3ebe2 100644
---- a/scenes/user interface/ui.gd	
-+++ b/scenes/user interface/ui.gd	
-@@ -1,7 +1,12 @@
- extends CanvasLayer
- 
-+var green: Color = Color("6bbfa3")
-+var red: Color = Color(0.9, 0, 0, 1)
+diff --git a/globals/transition_layer.gd b/globals/transition_layer.gd
+new file mode 100644
+index 0000000..dee39eb
+--- /dev/null
++++ b/globals/transition_layer.gd
+@@ -0,0 +1,7 @@
++extends CanvasLayer
 +
- @onready var laser_label: Label = $LaserCounter/VBoxContainer/Label
- @onready var grenade_label: Label = $GrenadeCounter/VBoxContainer/Label
-+@onready var laser_icon: TextureRect = $LaserCounter/VBoxContainer/TextureRect
-+@onready var grenade_icon: TextureRect = $GrenadeCounter/VBoxContainer/TextureRect
++func change_scene(target: String) -> void:
++	$AnimationPlayer.play("fade_to_black")
++	await $AnimationPlayer.animation_finished
++	get_tree().change_scene_to_file(target)
++	$AnimationPlayer.play_backwards("fade_to_black")
+diff --git a/globals/transition_layer.tscn b/globals/transition_layer.tscn
+new file mode 100644
+index 0000000..f9ebde1
+--- /dev/null
++++ b/globals/transition_layer.tscn
+@@ -0,0 +1,56 @@
++[gd_scene load_steps=5 format=3 uid="uid://6qc7q3e1oc8b"]
++
++[ext_resource type="Script" path="res://globals/transition_layer.gd" id="1_873wl"]
++
++[sub_resource type="Animation" id="Animation_gbuwq"]
++length = 0.001
++tracks/0/type = "value"
++tracks/0/imported = false
++tracks/0/enabled = true
++tracks/0/path = NodePath("ColorRect:modulate")
++tracks/0/interp = 1
++tracks/0/loop_wrap = true
++tracks/0/keys = {
++"times": PackedFloat32Array(0),
++"transitions": PackedFloat32Array(1),
++"update": 0,
++"values": [Color(1, 1, 1, 0)]
++}
++
++[sub_resource type="Animation" id="Animation_ebikr"]
++resource_name = "fade_to_black"
++tracks/0/type = "value"
++tracks/0/imported = false
++tracks/0/enabled = true
++tracks/0/path = NodePath("ColorRect:modulate")
++tracks/0/interp = 1
++tracks/0/loop_wrap = true
++tracks/0/keys = {
++"times": PackedFloat32Array(0.0333333, 1),
++"transitions": PackedFloat32Array(1, 1),
++"update": 0,
++"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
++}
++
++[sub_resource type="AnimationLibrary" id="AnimationLibrary_vpaw2"]
++_data = {
++"RESET": SubResource("Animation_gbuwq"),
++"fade_to_black": SubResource("Animation_ebikr")
++}
++
++[node name="TransitionLayer" type="CanvasLayer"]
++script = ExtResource("1_873wl")
++
++[node name="ColorRect" type="ColorRect" parent="."]
++modulate = Color(1, 1, 1, 0)
++anchors_preset = 15
++anchor_right = 1.0
++anchor_bottom = 1.0
++grow_horizontal = 2
++grow_vertical = 2
++color = Color(0, 0, 0, 1)
++
++[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
++libraries = {
++"": SubResource("AnimationLibrary_vpaw2")
++}
+diff --git a/project.godot b/project.godot
+index 0def38c..3ce6d02 100644
+--- a/project.godot
++++ b/project.godot
+@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
+ [autoload]
  
- func _ready() -> void:
- 	update_laser_text()
-@@ -9,6 +14,18 @@ func _ready() -> void:
+ Globals="*res://globals/globals.gd"
++TransitionLayer="*res://globals/transition_layer.tscn"
  
- func update_laser_text():
- 	laser_label.text = str(Globals.laser_amount)
--
-+	update_color(Globals.laser_amount, laser_label, laser_icon)
+ [input]
+ 
+diff --git a/scenes/levels/inside.gd b/scenes/levels/inside.gd
+index 5896a9b..88e60cd 100644
+--- a/scenes/levels/inside.gd
++++ b/scenes/levels/inside.gd
+@@ -1,8 +1,10 @@
+ extends LevelParent
+ 
+-@export var outside_level_scene: PackedScene
+ 
+ func _on_exit_gate_area_body_entered(_body: Node2D) -> void:
+ 	var tween = create_tween()
+ 	tween.tween_property($Player, "speed", 0, 0.8)
+-	get_tree().call_deferred("change_scene_to_packed", outside_level_scene)
++	call_deferred("change_scene", "res://scenes/levels/outside.tscn")
 +	
- func update_grenade_text():
- 	grenade_label.text = str(Globals.grenade_amount)
-+	update_color(Globals.grenade_amount, grenade_label, grenade_icon)
-+	
-+func update_color(amount: int, label: Label, icon: TextureRect) -> void:
-+	if amount > 0:
-+		label.modulate = green
-+		icon.modulate = green
-+	else:
-+		label.modulate = red
-+		icon.modulate = red
-+		
-+	
++func change_scene(scene_path: String) -> void:
++	TransitionLayer.change_scene(scene_path)
+diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
+index 786baad..661d382 100644
+--- a/scenes/levels/inside.tscn
++++ b/scenes/levels/inside.tscn
+@@ -1,10 +1,9 @@
+-[gd_scene load_steps=14 format=3 uid="uid://c4n6f3okesapm"]
++[gd_scene load_steps=13 format=3 uid="uid://c4n6f3okesapm"]
+ 
+ [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_nf3sw"]
+ [ext_resource type="TileSet" uid="uid://bmb0vbdyaxm0c" path="res://scenes/levels/house.tres" id="2_2qtls"]
+ [ext_resource type="Script" path="res://scenes/levels/inside.gd" id="2_7eopj"]
+ [ext_resource type="Texture2D" uid="uid://r7iys04rc6t5" path="res://graphics/ground/dirt.png" id="2_bg52o"]
+-[ext_resource type="PackedScene" uid="uid://bgleerevfpbtf" path="res://scenes/levels/outside.tscn" id="3_q5bw0"]
+ [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="4_4nmk8"]
+ [ext_resource type="PackedScene" uid="uid://h43n7jiv5v3f" path="res://scenes/objects/wall_light.tscn" id="4_wgb63"]
+ [ext_resource type="PackedScene" uid="uid://ddpa18d10fi2j" path="res://scenes/objects/simple_light.tscn" id="5_je8gl"]
+@@ -18,7 +17,6 @@ size = Vector2(397, 737)
+ 
+ [node name="Inside" instance=ExtResource("1_nf3sw")]
+ script = ExtResource("2_7eopj")
+-outside_level_scene = ExtResource("3_q5bw0")
+ 
+ [node name="Sprite2D" type="Sprite2D" parent="Ground" index="0"]
+ texture_repeat = 2
+diff --git a/scenes/levels/outside.gd b/scenes/levels/outside.gd
+index 9d7b867..bf7e368 100644
+--- a/scenes/levels/outside.gd
++++ b/scenes/levels/outside.gd
+@@ -4,8 +4,7 @@ extends LevelParent
+ func _on_gate_player_entered_gate(_body: Variant) -> void:
+ 	var tween = create_tween()
+ 	tween.tween_property($Player, "speed", 0, 0.8)
+-	#get_tree().change_scene_to_file("res://scenes/levels/inside.tscn")
+ 	call_deferred("change_scene", "res://scenes/levels/inside.tscn")
+-	
++
+ func change_scene(scene_path: String) -> void:
+-	get_tree().change_scene_to_file(scene_path)
++	TransitionLayer.change_scene(scene_path)
