@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 signal laser(pos, direction)
 signal grenade(pos, direction)
+signal update_stats
 
 var can_laser: bool = true
 var can_grenade: bool = true
@@ -43,3 +44,10 @@ func _on_laser_reload_timer_timeout() -> void:
 
 func _on_grenade_reload_timer_timeout() -> void:
 	can_grenade = true
+	
+func add_item(type: String) -> void:
+	if type == "laser":
+		Globals.laser_amount += 5
+	if type == "grenade":
+		Globals.grenade_amount += 1
+	update_stats.emit()

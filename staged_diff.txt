@@ -1,143 +1,290 @@
-diff --git a/globals/transition_layer.gd b/globals/transition_layer.gd
+diff --git a/scenes/items/ite25A1.tmp b/scenes/items/ite25A1.tmp
 new file mode 100644
-index 0000000..dee39eb
+index 0000000..50b6a8a
 --- /dev/null
-+++ b/globals/transition_layer.gd
-@@ -0,0 +1,7 @@
-+extends CanvasLayer
++++ b/scenes/items/ite25A1.tmp
+@@ -0,0 +1,24 @@
++[gd_scene load_steps=5 format=3 uid="uid://bbkq2ak5jj6jf"]
 +
-+func change_scene(target: String) -> void:
-+	$AnimationPlayer.play("fade_to_black")
-+	await $AnimationPlayer.animation_finished
-+	get_tree().change_scene_to_file(target)
-+	$AnimationPlayer.play_backwards("fade_to_black")
-diff --git a/globals/transition_layer.tscn b/globals/transition_layer.tscn
++[ext_resource type="Texture2D" uid="uid://cbdtv0wuocemy" path="res://graphics/items/orb2.png" id="1_ofm2j"]
++[ext_resource type="Script" path="res://scenes/items/item.gd" id="1_wu1o4"]
++[ext_resource type="Texture2D" uid="uid://c5j06fgfjohuq" path="res://graphics/lights/textures/circle.png" id="2_yxccx"]
++
++[sub_resource type="CircleShape2D" id="CircleShape2D_hwd2p"]
++radius = 58.258
++
++[node name="Item" type="Area2D"]
++script = ExtResource("1_wu1o4")
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++texture = ExtResource("1_ofm2j")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("CircleShape2D_hwd2p")
++
++[node name="PointLight2D" type="PointLight2D" parent="."]
++energy = 0.5
++texture = ExtResource("2_yxccx")
++texture_scale = 0.4
++
++[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+diff --git a/scenes/items/item.gd b/scenes/items/item.gd
 new file mode 100644
-index 0000000..f9ebde1
+index 0000000..51dbc42
 --- /dev/null
-+++ b/globals/transition_layer.tscn
-@@ -0,0 +1,56 @@
-+[gd_scene load_steps=5 format=3 uid="uid://6qc7q3e1oc8b"]
++++ b/scenes/items/item.gd
+@@ -0,0 +1,21 @@
++extends Area2D
 +
-+[ext_resource type="Script" path="res://globals/transition_layer.gd" id="1_873wl"]
++var rotation_speed: int = 4
++var available_options = ["laser", "laser", "laser", "laser", "grenade", "health"]
++var type = available_options.pick_random()
 +
-+[sub_resource type="Animation" id="Animation_gbuwq"]
-+length = 0.001
-+tracks/0/type = "value"
-+tracks/0/imported = false
-+tracks/0/enabled = true
-+tracks/0/path = NodePath("ColorRect:modulate")
-+tracks/0/interp = 1
-+tracks/0/loop_wrap = true
-+tracks/0/keys = {
-+"times": PackedFloat32Array(0),
-+"transitions": PackedFloat32Array(1),
-+"update": 0,
-+"values": [Color(1, 1, 1, 0)]
-+}
-+
-+[sub_resource type="Animation" id="Animation_ebikr"]
-+resource_name = "fade_to_black"
-+tracks/0/type = "value"
-+tracks/0/imported = false
-+tracks/0/enabled = true
-+tracks/0/path = NodePath("ColorRect:modulate")
-+tracks/0/interp = 1
-+tracks/0/loop_wrap = true
-+tracks/0/keys = {
-+"times": PackedFloat32Array(0.0333333, 1),
-+"transitions": PackedFloat32Array(1, 1),
-+"update": 0,
-+"values": [Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
-+}
-+
-+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vpaw2"]
-+_data = {
-+"RESET": SubResource("Animation_gbuwq"),
-+"fade_to_black": SubResource("Animation_ebikr")
-+}
-+
-+[node name="TransitionLayer" type="CanvasLayer"]
-+script = ExtResource("1_873wl")
-+
-+[node name="ColorRect" type="ColorRect" parent="."]
-+modulate = Color(1, 1, 1, 0)
-+anchors_preset = 15
-+anchor_right = 1.0
-+anchor_bottom = 1.0
-+grow_horizontal = 2
-+grow_vertical = 2
-+color = Color(0, 0, 0, 1)
-+
-+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-+libraries = {
-+"": SubResource("AnimationLibrary_vpaw2")
-+}
-diff --git a/project.godot b/project.godot
-index 0def38c..3ce6d02 100644
---- a/project.godot
-+++ b/project.godot
-@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
- [autoload]
- 
- Globals="*res://globals/globals.gd"
-+TransitionLayer="*res://globals/transition_layer.tscn"
- 
- [input]
- 
-diff --git a/scenes/levels/inside.gd b/scenes/levels/inside.gd
-index 5896a9b..88e60cd 100644
---- a/scenes/levels/inside.gd
-+++ b/scenes/levels/inside.gd
-@@ -1,8 +1,10 @@
- extends LevelParent
- 
--@export var outside_level_scene: PackedScene
- 
- func _on_exit_gate_area_body_entered(_body: Node2D) -> void:
- 	var tween = create_tween()
- 	tween.tween_property($Player, "speed", 0, 0.8)
--	get_tree().call_deferred("change_scene_to_packed", outside_level_scene)
-+	call_deferred("change_scene", "res://scenes/levels/outside.tscn")
++func _ready() -> void:
++	if type == "laser":
++		$Sprite2D.modulate = Color(0.1, 0.2, 0.8)
++	if type == "grenade":
++		$Sprite2D.modulate = Color(0.8, 0.2, 0.1)
++	if type == "health":
++		$Sprite2D.modulate = Color(0.1, 0.8, 0.2)	
 +	
-+func change_scene(scene_path: String) -> void:
-+	TransitionLayer.change_scene(scene_path)
++func _process(delta: float) -> void:
++	rotation += rotation_speed * delta
++
++
++func _on_body_entered(body: Node2D) -> void:
++	body.add_item(type)
++	queue_free()
+diff --git a/scenes/items/item.tscn b/scenes/items/item.tscn
+new file mode 100644
+index 0000000..c5b7af4
+--- /dev/null
++++ b/scenes/items/item.tscn
+@@ -0,0 +1,25 @@
++[gd_scene load_steps=5 format=3 uid="uid://bbkq2ak5jj6jf"]
++
++[ext_resource type="Texture2D" uid="uid://cbdtv0wuocemy" path="res://graphics/items/orb2.png" id="1_ofm2j"]
++[ext_resource type="Script" path="res://scenes/items/item.gd" id="1_wu1o4"]
++[ext_resource type="Texture2D" uid="uid://c5j06fgfjohuq" path="res://graphics/lights/textures/circle.png" id="2_yxccx"]
++
++[sub_resource type="CircleShape2D" id="CircleShape2D_hwd2p"]
++radius = 58.258
++
++[node name="Item" type="Area2D"]
++collision_layer = 16
++script = ExtResource("1_wu1o4")
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++texture = ExtResource("1_ofm2j")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++shape = SubResource("CircleShape2D_hwd2p")
++
++[node name="PointLight2D" type="PointLight2D" parent="."]
++energy = 0.5
++texture = ExtResource("2_yxccx")
++texture_scale = 0.4
++
++[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
-index 786baad..661d382 100644
+index 661d382..c577fe7 100644
 --- a/scenes/levels/inside.tscn
 +++ b/scenes/levels/inside.tscn
-@@ -1,10 +1,9 @@
--[gd_scene load_steps=14 format=3 uid="uid://c4n6f3okesapm"]
-+[gd_scene load_steps=13 format=3 uid="uid://c4n6f3okesapm"]
+@@ -1,4 +1,4 @@
+-[gd_scene load_steps=13 format=3 uid="uid://c4n6f3okesapm"]
++[gd_scene load_steps=14 format=3 uid="uid://c4n6f3okesapm"]
  
  [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_nf3sw"]
  [ext_resource type="TileSet" uid="uid://bmb0vbdyaxm0c" path="res://scenes/levels/house.tres" id="2_2qtls"]
- [ext_resource type="Script" path="res://scenes/levels/inside.gd" id="2_7eopj"]
- [ext_resource type="Texture2D" uid="uid://r7iys04rc6t5" path="res://graphics/ground/dirt.png" id="2_bg52o"]
--[ext_resource type="PackedScene" uid="uid://bgleerevfpbtf" path="res://scenes/levels/outside.tscn" id="3_q5bw0"]
- [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="4_4nmk8"]
- [ext_resource type="PackedScene" uid="uid://h43n7jiv5v3f" path="res://scenes/objects/wall_light.tscn" id="4_wgb63"]
- [ext_resource type="PackedScene" uid="uid://ddpa18d10fi2j" path="res://scenes/objects/simple_light.tscn" id="5_je8gl"]
-@@ -18,7 +17,6 @@ size = Vector2(397, 737)
+@@ -11,6 +11,7 @@
+ [ext_resource type="Texture2D" uid="uid://p6jqtvqnjtcw" path="res://graphics/lights/overlays/hole.png" id="6_1bdgl"]
+ [ext_resource type="Texture2D" uid="uid://c5j06fgfjohuq" path="res://graphics/lights/textures/circle.png" id="6_fvbme"]
+ [ext_resource type="Texture2D" uid="uid://dih74iiea0rj4" path="res://graphics/lights/overlays/lattice.png" id="7_8eknv"]
++[ext_resource type="PackedScene" uid="uid://bbkq2ak5jj6jf" path="res://scenes/items/item.tscn" id="12_y25rf"]
  
- [node name="Inside" instance=ExtResource("1_nf3sw")]
- script = ExtResource("2_7eopj")
--outside_level_scene = ExtResource("3_q5bw0")
+ [sub_resource type="RectangleShape2D" id="RectangleShape2D_ms7h1"]
+ size = Vector2(397, 737)
+@@ -103,25 +104,22 @@ texture_scale = 3.0
  
- [node name="Sprite2D" type="Sprite2D" parent="Ground" index="0"]
- texture_repeat = 2
-diff --git a/scenes/levels/outside.gd b/scenes/levels/outside.gd
-index 9d7b867..bf7e368 100644
---- a/scenes/levels/outside.gd
-+++ b/scenes/levels/outside.gd
-@@ -4,8 +4,7 @@ extends LevelParent
- func _on_gate_player_entered_gate(_body: Variant) -> void:
- 	var tween = create_tween()
- 	tween.tween_property($Player, "speed", 0, 0.8)
--	#get_tree().change_scene_to_file("res://scenes/levels/inside.tscn")
- 	call_deferred("change_scene", "res://scenes/levels/inside.tscn")
--	
+ [node name="Lights" parent="." index="3"]
+ metadata/_edit_lock_ = true
++metadata/_edit_group_ = true
+ 
+ [node name="LightFanAnimation" parent="Lights" index="0" instance=ExtResource("4_4nmk8")]
+ position = Vector2(3682, 350)
+-metadata/_edit_lock_ = true
+ 
+ [node name="LightFanAnimation2" parent="Lights" index="1" instance=ExtResource("4_4nmk8")]
+ position = Vector2(-916, 1841)
+-metadata/_edit_lock_ = true
+ 
+ [node name="LightFanAnimation3" parent="Lights" index="2" instance=ExtResource("4_4nmk8")]
+ position = Vector2(-4714, 808)
+-metadata/_edit_lock_ = true
+ 
+ [node name="Infrastructure" type="Sprite2D" parent="Lights" index="3"]
+ modulate = Color(1, 1, 1, 0.0352941)
+ position = Vector2(2849.5, 979)
+ scale = Vector2(3.092, 3.93852)
+ texture = ExtResource("5_o7ip5")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Infrastructure2" type="Sprite2D" parent="Lights" index="4"]
+ modulate = Color(1, 1, 1, 0.0352941)
+@@ -129,21 +127,18 @@ position = Vector2(-1556.27, -798.206)
+ rotation = -1.5708
+ scale = Vector2(6.34331, 13.1387)
+ texture = ExtResource("5_o7ip5")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D" type="Sprite2D" parent="Lights" index="5"]
+ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(990, 437)
+ scale = Vector2(7.81278, 7.81278)
+ texture = ExtResource("6_1bdgl")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D3" type="Sprite2D" parent="Lights" index="6"]
+ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(-2867, 3632)
+ scale = Vector2(7.81278, 7.81278)
+ texture = ExtResource("6_1bdgl")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D2" type="Sprite2D" parent="Lights" index="7"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -151,7 +146,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(1755, 1879)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D6" type="Sprite2D" parent="Lights" index="8"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -159,7 +153,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(897, 1870)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D4" type="Sprite2D" parent="Lights" index="9"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -167,7 +160,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(196, 1875)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D5" type="Sprite2D" parent="Lights" index="10"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -175,7 +167,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(1671, -1866)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D7" type="Sprite2D" parent="Lights" index="11"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -183,7 +174,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(693, -1866)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D8" type="Sprite2D" parent="Lights" index="12"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -191,7 +181,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(-158, -1859)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="Sprite2D9" type="Sprite2D" parent="Lights" index="13"]
+ modulate = Color(0.992157, 0.992157, 0.992157, 0.290196)
+@@ -199,7 +188,6 @@ self_modulate = Color(0.872299, 0.583609, 0.486262, 0.0862745)
+ position = Vector2(-983, -1860)
+ scale = Vector2(2.23154, 2.23154)
+ texture = ExtResource("7_8eknv")
+-metadata/_edit_lock_ = true
+ 
+ [node name="DirectionalLight2D" type="DirectionalLight2D" parent="." index="4"]
+ color = Color(0.753284, 0.835543, 0.810883, 1)
+@@ -214,4 +202,7 @@ metadata/_edit_group_ = true
+ position = Vector2(890.5, 232.5)
+ shape = SubResource("RectangleShape2D_ms7h1")
+ 
++[node name="Item" parent="." index="7" instance=ExtResource("12_y25rf")]
++position = Vector2(2393, 390)
 +
- func change_scene(scene_path: String) -> void:
--	get_tree().change_scene_to_file(scene_path)
-+	TransitionLayer.change_scene(scene_path)
+ [connection signal="body_entered" from="ExitGateArea" to="." method="_on_exit_gate_area_body_entered"]
+diff --git a/scenes/levels/level.gd b/scenes/levels/level.gd
+index 3e81cc8..a412ee7 100644
+--- a/scenes/levels/level.gd
++++ b/scenes/levels/level.gd
+@@ -31,3 +31,8 @@ func _on_house_player_entered() -> void:
+ func _on_house_player_exited() -> void:
+ 	var tween = get_tree().create_tween()
+ 	tween.tween_property($Player/Camera2D, "zoom", Vector2(0.5, 0.5), 2)
++
++
++func _on_player_update_stats() -> void:
++	$UI.update_laser_text()
++	$UI.update_grenade_text()
+diff --git a/scenes/levels/level.tscn b/scenes/levels/level.tscn
+index 91a060a..7b89cdd 100644
+--- a/scenes/levels/level.tscn
++++ b/scenes/levels/level.tscn
+@@ -26,3 +26,4 @@ rotation_smoothing_enabled = true
+ 
+ [connection signal="grenade" from="Player" to="." method="_on_player_grenade"]
+ [connection signal="laser" from="Player" to="." method="_on_player_laser"]
++[connection signal="update_stats" from="Player" to="." method="_on_player_update_stats"]
+diff --git a/scenes/levels/outside.tscn b/scenes/levels/outside.tscn
+index 4477fef..67ee190 100644
+--- a/scenes/levels/outside.tscn
++++ b/scenes/levels/outside.tscn
+@@ -1,4 +1,4 @@
+-[gd_scene load_steps=17 format=3 uid="uid://bgleerevfpbtf"]
++[gd_scene load_steps=18 format=3 uid="uid://bgleerevfpbtf"]
+ 
+ [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_0tbmh"]
+ [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_car28"]
+@@ -13,6 +13,7 @@
+ [ext_resource type="PackedScene" uid="uid://c1bjrs4v5p6pv" path="res://scenes/houses/house.tscn" id="9_6lamu"]
+ [ext_resource type="PackedScene" uid="uid://civ3cls1ocq8b" path="res://scenes/objects/steam_vent.tscn" id="10_6vblr"]
+ [ext_resource type="PackedScene" uid="uid://b6pm1f16ljrv5" path="res://scenes/objects/light_fan_animation.tscn" id="11_l6q37"]
++[ext_resource type="PackedScene" uid="uid://bbkq2ak5jj6jf" path="res://scenes/items/item.tscn" id="14_pi534"]
+ 
+ [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wux4t"]
+ resource_name = "walls"
+@@ -120,4 +121,7 @@ position = Vector2(243, -266)
+ [node name="Player" parent="." index="3"]
+ position = Vector2(827, 277)
+ 
++[node name="Item" parent="." index="6" instance=ExtResource("14_pi534")]
++position = Vector2(227, 616)
++
+ [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
+diff --git a/scenes/player/player.gd b/scenes/player/player.gd
+index 4a7cec4..1a93b5b 100644
+--- a/scenes/player/player.gd
++++ b/scenes/player/player.gd
+@@ -2,6 +2,7 @@ extends CharacterBody2D
+ 
+ signal laser(pos, direction)
+ signal grenade(pos, direction)
++signal update_stats
+ 
+ var can_laser: bool = true
+ var can_grenade: bool = true
+@@ -43,3 +44,10 @@ func _on_laser_reload_timer_timeout() -> void:
+ 
+ func _on_grenade_reload_timer_timeout() -> void:
+ 	can_grenade = true
++	
++func add_item(type: String) -> void:
++	if type == "laser":
++		Globals.laser_amount += 5
++	if type == "grenade":
++		Globals.grenade_amount += 1
++	update_stats.emit()
