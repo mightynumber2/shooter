@@ -544,7 +544,7 @@ metadata/_edit_lock_ = true
 position = Vector2(890.5, 232.5)
 shape = SubResource("RectangleShape2D_ms7h1")
 
-[node name="Player" parent="." index="7"]
+[node name="Player" parent="." index="8"]
 position = Vector2(3834, 381)
 metadata/_edit_group_ = true
 
@@ -552,7 +552,7 @@ metadata/_edit_group_ = true
 texture = ExtResource("6_fvbme")
 texture_scale = 3.0
 
-[node name="Lights" parent="." index="8"]
+[node name="Lights" parent="." index="9"]
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 

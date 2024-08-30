@@ -1,66 +1,63 @@
-diff --git a/scenes/enemies/scout.gd b/scenes/enemies/scout.gd
-index d18fa2f..a8a12de 100644
---- a/scenes/enemies/scout.gd
-+++ b/scenes/enemies/scout.gd
-@@ -4,10 +4,19 @@ var player_nearby: bool = false
- var can_laser: bool = true
- var right_gun_use: bool = true
+diff --git a/globals/globals.gd b/globals/globals.gd
+index e0445d7..d3f62ea 100644
+--- a/globals/globals.gd
++++ b/globals/globals.gd
+@@ -9,10 +9,21 @@ var laser_amount: int = 20:
+ var grenade_amount: int = 5:
+ 	set(value):
+ 		grenade_amount = value
+-		stat_change.emit()
++		stat_change.emit()		
++var player_vulnerable: bool = true
+ var health = 60:
+ 	set(value):
+-		health = value
++		if value > health:
++			health = min(value, 100)
++		else: 
++			if player_vulnerable:
++				health = value
++				player_vulnerable = false
++				player_vulnerable_timer()
+ 		stat_change.emit()
++			
++func player_vulnerable_timer():
++	await get_tree().create_timer(0.5).timeout
++	player_vulnerable = true
  
-+var health: int = 30
-+var vulnerable: bool = true
-+
- signal laser(pos, direction)
+ var player_pos: Vector2
+diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
+index 65e23c7..959e814 100644
+--- a/scenes/levels/inside.tscn
++++ b/scenes/levels/inside.tscn
+@@ -544,7 +544,7 @@ metadata/_edit_lock_ = true
+ position = Vector2(890.5, 232.5)
+ shape = SubResource("RectangleShape2D_ms7h1")
+ 
+-[node name="Player" parent="." index="7"]
++[node name="Player" parent="." index="8"]
+ position = Vector2(3834, 381)
+ metadata/_edit_group_ = true
+ 
+@@ -552,7 +552,7 @@ metadata/_edit_group_ = true
+ texture = ExtResource("6_fvbme")
+ texture_scale = 3.0
+ 
+-[node name="Lights" parent="." index="8"]
++[node name="Lights" parent="." index="9"]
+ metadata/_edit_lock_ = true
+ metadata/_edit_group_ = true
+ 
+diff --git a/scenes/player/player.gd b/scenes/player/player.gd
+index 040702d..c87bdb0 100644
+--- a/scenes/player/player.gd
++++ b/scenes/player/player.gd
+@@ -10,7 +10,7 @@ var can_grenade: bool = true
+ var speed: int = max_speed
  
  func hit():
--	print("scout hit")
-+	if vulnerable:
-+		health -= 10
-+		vulnerable = false
-+		$Timers/HitTimer.start()
-+	if health <= 0:
-+		queue_free()
-+		
+-	print("Player hit!")
++	Globals.health -= 10
  
  func _process(_delta: float) -> void:
- 	if player_nearby:
-@@ -19,7 +28,7 @@ func _process(_delta: float) -> void:
- 			var direction: Vector2 = (Globals.player_pos - position).normalized()
- 			laser.emit(pos, direction)
- 			can_laser = false
--			$LaserCooldown.start()
-+			$Timers/LaserTimer.start()
- 
- func _on_attack_area_body_entered(_body: Node2D) -> void:
- 	player_nearby = true
-@@ -27,6 +36,8 @@ func _on_attack_area_body_entered(_body: Node2D) -> void:
- func _on_attack_area_body_exited(_body: Node2D) -> void:
- 	player_nearby = false
- 
--func _on_laser_cooldown_timeout() -> void:
-+func _on_laser_timer_timeout() -> void:
- 	can_laser = true
- 	
-+func _on_hit_timer_timeout() -> void:
-+	vulnerable = true
-diff --git a/scenes/enemies/scout.tscn b/scenes/enemies/scout.tscn
-index 3f6f6b7..b55f295 100644
---- a/scenes/enemies/scout.tscn
-+++ b/scenes/enemies/scout.tscn
-@@ -35,8 +35,15 @@ position = Vector2(128, 11)
- [node name="Marker2D2" type="Marker2D" parent="LaserSpawnPositions"]
- position = Vector2(118, -29)
- 
--[node name="LaserCooldown" type="Timer" parent="."]
-+[node name="Timers" type="Node" parent="."]
-+
-+[node name="LaserTimer" type="Timer" parent="Timers"]
-+
-+[node name="HitTimer" type="Timer" parent="Timers"]
-+wait_time = 0.5
-+one_shot = true
- 
- [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]
- [connection signal="body_exited" from="AttackArea" to="." method="_on_attack_area_body_exited"]
--[connection signal="timeout" from="LaserCooldown" to="." method="_on_laser_cooldown_timeout"]
-+[connection signal="timeout" from="Timers/LaserTimer" to="." method="_on_laser_timer_timeout"]
-+[connection signal="timeout" from="Timers/HitTimer" to="." method="_on_hit_timer_timeout"]
+ 	# input
