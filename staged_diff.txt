@@ -1,63 +1,159 @@
-diff --git a/globals/globals.gd b/globals/globals.gd
-index e0445d7..d3f62ea 100644
---- a/globals/globals.gd
-+++ b/globals/globals.gd
-@@ -9,10 +9,21 @@ var laser_amount: int = 20:
- var grenade_amount: int = 5:
- 	set(value):
- 		grenade_amount = value
--		stat_change.emit()
-+		stat_change.emit()		
-+var player_vulnerable: bool = true
- var health = 60:
- 	set(value):
--		health = value
-+		if value > health:
-+			health = min(value, 100)
-+		else: 
-+			if player_vulnerable:
-+				health = value
-+				player_vulnerable = false
-+				player_vulnerable_timer()
- 		stat_change.emit()
-+			
-+func player_vulnerable_timer():
-+	await get_tree().create_timer(0.5).timeout
-+	player_vulnerable = true
- 
- var player_pos: Vector2
-diff --git a/scenes/levels/inside.tscn b/scenes/levels/inside.tscn
-index 65e23c7..959e814 100644
---- a/scenes/levels/inside.tscn
-+++ b/scenes/levels/inside.tscn
-@@ -544,7 +544,7 @@ metadata/_edit_lock_ = true
- position = Vector2(890.5, 232.5)
- shape = SubResource("RectangleShape2D_ms7h1")
- 
--[node name="Player" parent="." index="7"]
-+[node name="Player" parent="." index="8"]
- position = Vector2(3834, 381)
- metadata/_edit_group_ = true
- 
-@@ -552,7 +552,7 @@ metadata/_edit_group_ = true
- texture = ExtResource("6_fvbme")
- texture_scale = 3.0
- 
--[node name="Lights" parent="." index="8"]
-+[node name="Lights" parent="." index="9"]
- metadata/_edit_lock_ = true
- metadata/_edit_group_ = true
- 
-diff --git a/scenes/player/player.gd b/scenes/player/player.gd
-index 040702d..c87bdb0 100644
---- a/scenes/player/player.gd
-+++ b/scenes/player/player.gd
-@@ -10,7 +10,7 @@ var can_grenade: bool = true
- var speed: int = max_speed
- 
- func hit():
--	print("Player hit!")
-+	Globals.health -= 10
- 
+diff --git a/scenes/enemies/sco28DB.tmp b/scenes/enemies/sco28DB.tmp
+new file mode 100644
+index 0000000..619cd0b
+--- /dev/null
++++ b/scenes/enemies/sco28DB.tmp
+@@ -0,0 +1,58 @@
++[gd_scene load_steps=7 format=3 uid="uid://bqwowts32crs2"]
++
++[ext_resource type="Texture2D" uid="uid://butoldkjxcupo" path="res://graphics/enemies/scout.png" id="1_54y8v"]
++[ext_resource type="Script" path="res://scenes/enemies/scout.gd" id="1_r71ui"]
++[ext_resource type="Shader" path="res://scenes/enemies/scout.gdshader" id="2_2srir"]
++
++[sub_resource type="ShaderMaterial" id="ShaderMaterial_47fxf"]
++shader = ExtResource("2_2srir")
++shader_parameter/color = Color(0.873722, 0.96891, 0.98302, 1)
++shader_parameter/progress = 0.0
++
++[sub_resource type="CircleShape2D" id="CircleShape2D_km36u"]
++radius = 47.0106
++
++[sub_resource type="CircleShape2D" id="CircleShape2D_1cah2"]
++radius = 905.0
++
++[node name="Scout" type="CharacterBody2D" groups=["Entity", "Scouts"]]
++collision_layer = 2
++collision_mask = 11
++script = ExtResource("1_r71ui")
++
++[node name="Sprite2D" type="Sprite2D" parent="."]
++material = SubResource("ShaderMaterial_47fxf")
++position = Vector2(43, 26)
++rotation = 1.5708
++texture = ExtResource("1_54y8v")
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++visible = false
++shape = SubResource("CircleShape2D_km36u")
++
++[node name="AttackArea" type="Area2D" parent="."]
++visible = false
++
++[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
++shape = SubResource("CircleShape2D_1cah2")
++
++[node name="LaserSpawnPositions" type="Node2D" parent="."]
++
++[node name="Marker2D" type="Marker2D" parent="LaserSpawnPositions"]
++position = Vector2(128, 11)
++
++[node name="Marker2D2" type="Marker2D" parent="LaserSpawnPositions"]
++position = Vector2(118, -29)
++
++[node name="Timers" type="Node" parent="."]
++
++[node name="LaserTimer" type="Timer" parent="Timers"]
++
++[node name="HitTimer" type="Timer" parent="Timers"]
++wait_time = 0.5
++one_shot = true
++
++[connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]
++[connection signal="body_exited" from="AttackArea" to="." method="_on_attack_area_body_exited"]
++[connection signal="timeout" from="Timers/LaserTimer" to="." method="_on_laser_timer_timeout"]
++[connection signal="timeout" from="Timers/HitTimer" to="." method="_on_hit_timer_timeout"]
+diff --git a/scenes/enemies/scout.gd b/scenes/enemies/scout.gd
+index a8a12de..5656cf4 100644
+--- a/scenes/enemies/scout.gd
++++ b/scenes/enemies/scout.gd
+@@ -14,6 +14,7 @@ func hit():
+ 		health -= 10
+ 		vulnerable = false
+ 		$Timers/HitTimer.start()
++		$Sprite2D.material.set_shader_parameter("progress", 1)
+ 	if health <= 0:
+ 		queue_free()
+ 		
+@@ -21,6 +22,7 @@ func hit():
  func _process(_delta: float) -> void:
- 	# input
+ 	if player_nearby:
+ 		look_at(Globals.player_pos)
++		
+ 		if can_laser:
+ 			var marker_node = $LaserSpawnPositions.get_child(right_gun_use)
+ 			right_gun_use = not right_gun_use
+@@ -30,6 +32,7 @@ func _process(_delta: float) -> void:
+ 			can_laser = false
+ 			$Timers/LaserTimer.start()
+ 
++
+ func _on_attack_area_body_entered(_body: Node2D) -> void:
+ 	player_nearby = true
+ 
+@@ -41,3 +44,4 @@ func _on_laser_timer_timeout() -> void:
+ 	
+ func _on_hit_timer_timeout() -> void:
+ 	vulnerable = true
++	$Sprite2D.material.set_shader_parameter("progress", 0)
+diff --git a/scenes/enemies/scout.gdshader b/scenes/enemies/scout.gdshader
+new file mode 100644
+index 0000000..edcbb18
+--- /dev/null
++++ b/scenes/enemies/scout.gdshader
+@@ -0,0 +1,10 @@
++shader_type canvas_item;
++
++uniform vec3 color: source_color = vec3(1);
++uniform float progress: hint_range(0.0, 1.0, 0.1) = 0;
++
++void fragment() {
++	float current_a = texture(TEXTURE, UV).a;
++	vec4 target_color = mix(texture(TEXTURE, UV), vec4(color, current_a), progress);
++	COLOR = target_color;
++}
+diff --git a/scenes/enemies/scout.tscn b/scenes/enemies/scout.tscn
+index b55f295..ec8e556 100644
+--- a/scenes/enemies/scout.tscn
++++ b/scenes/enemies/scout.tscn
+@@ -1,7 +1,13 @@
+-[gd_scene load_steps=5 format=3 uid="uid://bqwowts32crs2"]
++[gd_scene load_steps=7 format=3 uid="uid://bqwowts32crs2"]
+ 
+ [ext_resource type="Texture2D" uid="uid://butoldkjxcupo" path="res://graphics/enemies/scout.png" id="1_54y8v"]
+ [ext_resource type="Script" path="res://scenes/enemies/scout.gd" id="1_r71ui"]
++[ext_resource type="Shader" path="res://scenes/enemies/scout.gdshader" id="2_2srir"]
++
++[sub_resource type="ShaderMaterial" id="ShaderMaterial_47fxf"]
++shader = ExtResource("2_2srir")
++shader_parameter/color = Color(0.873722, 0.96891, 0.98302, 1)
++shader_parameter/progress = 0.0
+ 
+ [sub_resource type="CircleShape2D" id="CircleShape2D_km36u"]
+ radius = 47.0106
+@@ -15,14 +21,17 @@ collision_mask = 11
+ script = ExtResource("1_r71ui")
+ 
+ [node name="Sprite2D" type="Sprite2D" parent="."]
++material = SubResource("ShaderMaterial_47fxf")
+ position = Vector2(43, 26)
+ rotation = 1.5708
+ texture = ExtResource("1_54y8v")
+ 
+ [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
++visible = false
+ shape = SubResource("CircleShape2D_km36u")
+ 
+ [node name="AttackArea" type="Area2D" parent="."]
++visible = false
+ 
+ [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+ shape = SubResource("CircleShape2D_1cah2")
+@@ -40,7 +49,7 @@ position = Vector2(118, -29)
+ [node name="LaserTimer" type="Timer" parent="Timers"]
+ 
+ [node name="HitTimer" type="Timer" parent="Timers"]
+-wait_time = 0.5
++wait_time = 0.2
+ one_shot = true
+ 
+ [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]
