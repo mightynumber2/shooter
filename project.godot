@@ -23,6 +23,7 @@ TransitionLayer="*res://globals/transition_layer.tscn"
 [global_group]
 
 Container=""
+Scouts=""
 
 [input]
 
