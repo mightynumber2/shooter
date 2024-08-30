@@ -9,6 +9,9 @@ var can_grenade: bool = true
 @export var max_speed: int = 500
 var speed: int = max_speed
 
+func hit():
+	print("Player hit!")
+
 func _process(_delta: float) -> void:
 	# input
 	var direction = Input.get_vector("left", "right", "up", "down")

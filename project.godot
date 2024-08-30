@@ -24,6 +24,7 @@ TransitionLayer="*res://globals/transition_layer.tscn"
 
 Container=""
 Scouts=""
+Entity=""
 
 [input]
 
