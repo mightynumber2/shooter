@@ -10,6 +10,7 @@ radius = 96.0
 height = 246.0
 
 [node name="Toilet" instance=ExtResource("1_v1c0k")]
+scale = Vector2(0.8, 0.8)
 script = ExtResource("2_dfwyg")
 
 [node name="BaseSprite" parent="." index="0"]
