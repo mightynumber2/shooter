@@ -27,11 +27,9 @@ rotation = 1.5708
 texture = ExtResource("1_54y8v")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 shape = SubResource("CircleShape2D_km36u")
 
 [node name="AttackArea" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
 shape = SubResource("CircleShape2D_1cah2")
@@ -47,6 +45,7 @@ position = Vector2(118, -29)
 [node name="Timers" type="Node" parent="."]
 
 [node name="LaserTimer" type="Timer" parent="Timers"]
+one_shot = true
 
 [node name="HitTimer" type="Timer" parent="Timers"]
 wait_time = 0.2
