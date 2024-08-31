@@ -211,14 +211,12 @@ shape = SubResource("CapsuleShape2D_jghpq")
 visible = false
 
 [node name="NoticeArea2D" type="Area2D" parent="AggroAreas"]
-scale = Vector2(1, 1)
 collision_layer = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AggroAreas/NoticeArea2D"]
 shape = SubResource("CircleShape2D_wgiex")
 
 [node name="AttackArea2D" type="Area2D" parent="AggroAreas"]
-scale = Vector2(1, 1)
 collision_layer = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AggroAreas/AttackArea2D"]
