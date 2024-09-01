@@ -23,7 +23,7 @@ func _ready() -> void:
 	line2.width = 0
 	
 func _process(delta: float) -> void:
-	progress_ratio += 0.01 * delta
+	progress_ratio += 0.02 * delta
 	if player_near:
 		$Turret.look_at(Globals.player_pos)
 		
