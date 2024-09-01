@@ -185,7 +185,7 @@ anim_offset_max = 1.0
 material = SubResource("ShaderMaterial_bjjjn")
 scale = Vector2(0.07, 0.07)
 collision_layer = 2
-collision_mask = 11
+collision_mask = 15
 motion_mode = 1
 script = ExtResource("1_jhqld")
 
