@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://bgleerevfpbtf"]
+[gd_scene load_steps=27 format=3 uid="uid://bgleerevfpbtf"]
 
 [ext_resource type="PackedScene" uid="uid://qkshw585lie5" path="res://scenes/levels/level.tscn" id="1_0tbmh"]
 [ext_resource type="PackedScene" uid="uid://b0rcxvc3vsgkr" path="res://scenes/objects/gate.tscn" id="2_car28"]
@@ -81,18 +81,15 @@ size = Vector2(624, 1175)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pho5r"]
 size = Vector2(646.25, 475)
 
-[sub_resource type="NavigationPolygon" id="NavigationPolygon_mnbii"]
-vertices = PackedVector2Array(4354, -94, 4375, 868, 4197, 873, 2999.97, 589.18, 3887, 77, 5160, 2237, 5174, 3988, 4576, 3400, 4558, 2843, 4801, 2233, 3391, 3391, 3650.37, 4010.72, 3395.98, 3736.06, 2976, 640, 3240, 926, 2595.9, 1725.42, 1814.99, 1421.92, 1800.02, 1272.3, 2438, 858, 4422, 1796, 4736, 1746, 4748, 2131, 83, 4005, 111, 4792, -1037, 4780, -1093, 4690, 106, 3836, 254, 3992, 1281, 1415.73, 1282, 1415, 2460, 1792, 2453, 3797, -43.9531, 13.0078, -44, 12, 2176, 8, 1693.63, 535.648, 3887, -111, 3450, 70, 2983, 105, 3846, 4180, 3846, 4429, 2447, 4409, 3651, 4180, 3256, 3617, 2623, 3622, -2056, 631, -2038, -84, -1101, -69, -1076, -19, -1608, 1347, 2481, -136, 2843, 127, 2844, 522, 260, 4389, 3658, 4019, 2433, 668, 3418, 2830, 3382, 926, 1706.31, 649.086, 1981, 653, 1986, 858, 1281, 1288, 3445, -118, 4193, 1343, 4401, 1347, 3379.8, 924.07, 2595, 1731, -637, 2811, -506, 16)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8, 9), PackedInt32Array(10, 7, 6, 11, 12), PackedInt32Array(13, 14, 15, 16, 17, 18), PackedInt32Array(19, 20, 21), PackedInt32Array(22, 23, 24, 25), PackedInt32Array(22, 25, 26), PackedInt32Array(27, 22, 26, 28, 29, 16, 30, 31), PackedInt32Array(32, 33, 34, 35), PackedInt32Array(4, 36, 0), PackedInt32Array(37, 4, 3, 38), PackedInt32Array(39, 40, 41, 42), PackedInt32Array(14, 43, 44, 15), PackedInt32Array(45, 46, 47, 48, 49), PackedInt32Array(50, 51, 52, 35, 34), PackedInt32Array(41, 53, 27, 31, 12, 11, 54, 42), PackedInt32Array(18, 55, 13), PackedInt32Array(21, 9, 8, 56, 57, 19), PackedInt32Array(58, 59, 60, 17, 61), PackedInt32Array(50, 62, 37, 38), PackedInt32Array(50, 38, 51), PackedInt32Array(63, 64, 19), PackedInt32Array(63, 19, 57), PackedInt32Array(3, 2, 63, 57, 65), PackedInt32Array(3, 65, 14, 13), PackedInt32Array(60, 18, 17), PackedInt32Array(16, 15, 66, 30), PackedInt32Array(28, 26, 67, 49, 48, 68), PackedInt32Array(28, 68, 32, 61), PackedInt32Array(61, 32, 35, 58)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-44, 12, 2176, 8, 2481, -136, 3445, -118, 3450, 70, 3887, 77, 3887, -111, 4354, -94, 4375, 868, 4197, 873, 4193, 1343, 4401, 1347, 4422, 1796, 4736, 1746, 4748, 2131, 4801, 2233, 5160, 2237, 5174, 3988, 3632, 4011, 3396, 3737, 3391, 3391, 4576, 3400, 4558, 2843, 3418, 2830, 3382, 926, 3000, 590, 2983, 105, 2843, 127, 2844, 522, -21, 556), PackedVector2Array(2976, 640, 3001, 587, 3385, 924, 3240, 926, 3256, 3617, 2623, 3622, 2595, 1662, 2466, 1633, 1817, 1442, 1800, 1272, 1700, 649, 1981, 653, 1986, 858, 2438, 858, 2433, 668), PackedVector2Array(-2038, -84, -1101, -69, -1076, -19, -506, 16, -42, 13, 3, 505, 18, 548, 1693, 530, 1711, 691, 1810, 1272, 1281, 1288, 1281, 1416, -637, 2811, -1608, 1347, -2056, 631), PackedVector2Array(-637, 2811, 1282, 1415, 1821, 1422, 2608, 1651, 2595, 1731, 2460, 1792, 2453, 3797, 3397, 3736, 3658, 4019, 3651, 4180, 3846, 4180, 3846, 4429, 2447, 4409, 260, 4389, 254, 3992, 83, 4005, 111, 4792, -1037, 4780, -1093, 4690, 106, 3836)])
-agent_radius = 0.0
-
 [node name="Outside" instance=ExtResource("1_0tbmh")]
 script = ExtResource("2_spfgs")
 
 [node name="Gate" parent="." index="1" instance=ExtResource("2_car28")]
 z_index = 1
 position = Vector2(243, -266)
+
+[node name="Ground" parent="." index="2"]
+metadata/_edit_group_ = true
 
 [node name="Soil" type="Sprite2D" parent="Ground" index="0"]
 texture_repeat = 2
@@ -332,7 +329,7 @@ position = Vector2(-2225, 402)
 polygon = PackedVector2Array(4587, 1650, 4643, 1539, 4727, 1586, 4719, 1662, 4702, 1726, 4600, 1755)
 
 [node name="Hunter" parent="Enemies" index="0" instance=ExtResource("18_r5y61")]
-position = Vector2(4635, 2541)
+position = Vector2(1424, 1069)
 
 [node name="Player" parent="." index="7"]
 z_index = 2
@@ -369,9 +366,6 @@ collision_layer = 16
 [node name="CollisionShape2D" type="CollisionShape2D" parent="LevelBarriers/StaticBody2D3" index="0"]
 position = Vector2(4212.88, 4285)
 shape = SubResource("RectangleShape2D_pho5r")
-
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." index="12"]
-navigation_polygon = SubResource("NavigationPolygon_mnbii")
 
 [connection signal="player_entered_gate" from="Gate" to="." method="_on_gate_player_entered_gate"]
 [connection signal="player_entered" from="Ground/House" to="." method="_on_house_player_entered"]

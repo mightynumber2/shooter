@@ -6,11 +6,11 @@ var speed: int = 200
 
 func _physics_process(_delta: float) -> void:
 	if active:
-		var next_path_pos: Vector2 = $NavigationAgent2D.get_next_path_position()
-		var direction: Vector2 = (next_path_pos - global_position).normalized()
+		var direction: Vector2 = (Globals.player_pos - global_position).normalized()
 		velocity = direction * speed
 		move_and_slide()
-		look_at(Globals.player_pos)
+		var look_angle = direction.angle()
+		rotation = look_angle + PI / 2
 		
 
 
@@ -20,8 +20,3 @@ func _on_notice_area_body_entered(_body: Node2D) -> void:
 
 func _on_notice_area_body_exited(_body: Node2D) -> void:
 	active = false
-
-
-func _on_navigation_timer_timeout() -> void:
-	if active:
-		$NavigationAgent2D.call_deferred("set_target_position", Globals.player_pos)
